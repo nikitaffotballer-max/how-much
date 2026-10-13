@@ -2,6 +2,8 @@ import SearchRounded from '@mui/icons-material/SearchRounded';
 import {
   HC_CATEGORIES,
   HC_CATEGORY_KEYS,
+  HC_PLAN_LIMITS,
+  plural,
   type CategoryKey,
   type ReceiptListItem,
 } from '@how-much/shared';
@@ -25,6 +27,7 @@ import { PageHeader } from '../../layout/PageHeader';
 import { formatDayHeading, formatTime, localDayKey } from '../../lib/dates';
 import { useDebouncedValue } from '../../lib/useDebouncedValue';
 import { hcColors } from '../../theme/hcTheme';
+import { useCurrentUser } from '../auth/useCurrentUser';
 import { ATTENTION_KEY, AttentionList } from './AttentionList';
 import { ReceiptRow } from './ReceiptRow';
 
@@ -90,6 +93,8 @@ function CategoryFilter({
 }
 
 function ReceiptList({ q, category }: { q: string; category: CategoryKey | null }) {
+  const { data: user } = useCurrentUser();
+  const freeHistoryMonths = user?.plan === 'free' ? HC_PLAN_LIMITS.free.historyMonths : null;
   const receipts = useInfiniteQuery({
     queryKey: ['receipts', 'list', { q, category }],
     queryFn: ({ pageParam }) =>
@@ -206,6 +211,13 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
         >
           Показать ещё
         </Button>
+      )}
+      {!receipts.hasNextPage && freeHistoryMonths && (
+        <Typography sx={{ fontSize: 14, color: 'text.secondary', textAlign: 'center' }}>
+          На бесплатном тарифе видны чеки за {freeHistoryMonths}{' '}
+          {plural(freeHistoryMonths, ['месяц', 'месяца', 'месяцев'])}. Более старые сохранены и
+          появятся в Pro.
+        </Typography>
       )}
     </Box>
   );

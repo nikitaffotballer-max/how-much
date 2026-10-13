@@ -5,9 +5,11 @@ import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
+import { can } from '@how-much/shared';
 import { hcApi } from '../../api/hcApi';
 import { PageHeader } from '../../layout/PageHeader';
 import { periodLabels, readPeriodQuery, writePeriodQuery } from '../../lib/periods';
+import { useCurrentUser } from '../auth/useCurrentUser';
 import { CategoryGrid } from './CategoryGrid';
 import { DailySpendingCard } from './DailySpendingCard';
 import { EmptyDashboard } from './EmptyDashboard';
@@ -82,7 +84,10 @@ function EmptyPeriod({ onShowMonth }: { onShowMonth?: () => void }) {
 
 export function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = readPeriodQuery(searchParams);
+  const { data: user } = useCurrentUser();
+  const locked = !user || !can(user, 'dashboardPeriods');
+  // Ссылка с ?period=week у пользователя на Free открывает месяц, а не ошибку 402.
+  const query = locked ? ({ period: 'month' } as const) : readPeriodQuery(searchParams);
   const summary = useQuery({
     queryKey: ['dashboard-summary', query],
     queryFn: () => hcApi.getDashboardSummary(query),
@@ -97,6 +102,7 @@ export function DashboardPage() {
       <PageHeader title="Привет!" />
       <PeriodPicker
         value={query}
+        locked={locked}
         onChange={(next) => setSearchParams(writePeriodQuery(next), { replace: true })}
       />
 

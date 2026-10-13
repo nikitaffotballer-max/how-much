@@ -1,6 +1,7 @@
 import { dashboardQuerySchema, type DashboardQuery } from '@how-much/shared';
 import CalendarMonthRounded from '@mui/icons-material/CalendarMonthRounded';
 import CheckRounded from '@mui/icons-material/CheckRounded';
+import LockRounded from '@mui/icons-material/LockRounded';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -93,15 +94,22 @@ function CustomPeriodDialog({
   );
 }
 
-/** Выбор периода дашборда (ТЗ, 3.5): день, неделя, месяц или свои даты. */
+/**
+ * Выбор периода дашборда (ТЗ, 3.5): день, неделя, месяц или свои даты.
+ * На Free доступен только месяц: остальные чипы с замком и объясняют, почему.
+ */
 export function PeriodPicker({
   value,
   onChange,
+  locked,
 }: {
   value: DashboardQuery;
   onChange: (query: DashboardQuery) => void;
+  locked: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [lockHint, setLockHint] = useState(false);
+  const isLocked = (period: DashboardQuery['period']) => locked && period !== 'month';
   const custom = value.period === 'custom' ? value : null;
 
   const chipSx = (selected: boolean) => ({
@@ -116,44 +124,55 @@ export function PeriodPicker({
   });
 
   return (
-    <Box
-      role="group"
-      aria-label="Период"
-      sx={{ display: 'flex', gap: 1, overflowX: 'auto', mx: -0.5, px: 0.5, pb: 0.5 }}
-    >
-      {PRESETS.map((preset) => {
-        const selected = value.period === preset.period;
-        return (
-          <Chip
-            key={preset.period}
-            label={preset.label}
-            variant="outlined"
-            icon={selected ? <CheckRounded /> : undefined}
-            aria-pressed={selected}
-            onClick={() => onChange({ period: preset.period })}
-            sx={chipSx(selected)}
-          />
-        );
-      })}
-      <Chip
-        label={custom ? formatDateRange(custom) : 'Период'}
-        variant="outlined"
-        icon={<CalendarMonthRounded />}
-        aria-pressed={Boolean(custom)}
-        onClick={() => setDialogOpen(true)}
-        sx={chipSx(Boolean(custom))}
-      />
-      {/* key пересоздаёт окно с актуальными датами при каждом открытии. */}
-      <CustomPeriodDialog
-        key={String(dialogOpen)}
-        open={dialogOpen}
-        initial={custom ?? { from: monthAgo(), to: today() }}
-        onClose={() => setDialogOpen(false)}
-        onApply={(query) => {
-          setDialogOpen(false);
-          onChange(query);
-        }}
-      />
+    <Box>
+      <Box
+        role="group"
+        aria-label="Период"
+        sx={{ display: 'flex', gap: 1, overflowX: 'auto', mx: -0.5, px: 0.5, pb: 0.5 }}
+      >
+        {PRESETS.map((preset) => {
+          const selected = value.period === preset.period;
+          return (
+            <Chip
+              key={preset.period}
+              label={preset.label}
+              variant="outlined"
+              icon={
+                isLocked(preset.period) ? <LockRounded /> : selected ? <CheckRounded /> : undefined
+              }
+              aria-pressed={selected}
+              onClick={() =>
+                isLocked(preset.period) ? setLockHint(true) : onChange({ period: preset.period })
+              }
+              sx={chipSx(selected)}
+            />
+          );
+        })}
+        <Chip
+          label={custom ? formatDateRange(custom) : 'Период'}
+          variant="outlined"
+          icon={locked ? <LockRounded /> : <CalendarMonthRounded />}
+          aria-pressed={Boolean(custom)}
+          onClick={() => (locked ? setLockHint(true) : setDialogOpen(true))}
+          sx={chipSx(Boolean(custom))}
+        />
+        {/* key пересоздаёт окно с актуальными датами при каждом открытии. */}
+        <CustomPeriodDialog
+          key={String(dialogOpen)}
+          open={dialogOpen}
+          initial={custom ?? { from: monthAgo(), to: today() }}
+          onClose={() => setDialogOpen(false)}
+          onApply={(query) => {
+            setDialogOpen(false);
+            onChange(query);
+          }}
+        />
+      </Box>
+      {lockHint && (
+        <Typography role="status" sx={{ fontSize: 14, color: 'text.secondary', mt: 1 }}>
+          Сегодня, неделя и свои даты — в Pro. На бесплатном тарифе дашборд за текущий месяц.
+        </Typography>
+      )}
     </Box>
   );
 }
