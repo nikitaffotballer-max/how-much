@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Чеки</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F2}
+a{color:#0F6B4B}a:hover{color:#0A4F37}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #F4F5F2; font-family: 'Onest', system-ui, sans-serif; color: #15171A; font-variant-numeric: tabular-nums">
+
+<nav aria-label="Основное меню" style="flex: 1 1 220px; box-sizing: border-box; padding: 24px 16px; background: #FFFFFF; border-right: 1px solid #E3E5E0; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<svg width="34" height="34" viewBox="0 0 40 40" role="img" aria-label="Хау мач"><path d="M8 2H32A6 6 0 0 1 38 8V36L34.4 33L30.8 36L27.2 33L23.6 36L20 33L16.4 36L12.8 33L9.2 36L5.6 33L2 36V8A6 6 0 0 1 8 2Z" fill="{{accent}}"></path><text x="20" y="24.5" text-anchor="middle" font-family="Onest, system-ui, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">хм</text></svg>
+<span aria-hidden="true" style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em"><span style="font-weight: 500">хау</span><span style="color: {{accent}}">мач</span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<a href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+Дашборд</a>
+<a href="Receipts.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #15171A; background: #E3F1EA; font-weight: 600; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg>
+Чеки<span style="margin-left: auto; font-size: 12px; font-weight: 600; color: #FFFFFF; background: #C2561A; padding: 2px 7px; border-radius: 10px">3</span></a>
+<a href="Inflation.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+Инфляция<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #0F6B4B; background: #E3F1EA; padding: 2px 6px; border-radius: 6px">Pro</span></a>
+<a href="#chat" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+Вопросы<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #0F6B4B; background: #E3F1EA; padding: 2px 6px; border-radius: 6px">Pro</span></a>
+<a href="#settings" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+Настройки</a>
+</div>
+<div style="margin-top: auto; padding: 16px; border-radius: 12px; background: #F4F5F2; display: flex; flex-direction: column; gap: 6px">
+<div style="font-weight: 600; font-size: 14px">Pro · пробный период</div>
+<div style="font-size: 13px; line-height: 1.45; color: #5B6068">Осталось 11 дней, затем 249 ₽ в месяц.</div>
+<a href="Pricing.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none; min-height: 32px; display: flex; align-items: center">Управлять подпиской →</a>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 20px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em">Чеки</h1>
+<p style="margin: 0; font-size: 14px; color: #5B6068">47 чеков за октябрь · 38 420 ₽</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<button type="button" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; color: #15171A; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"></path><path d="M20 4v5h-5"></path></svg>
+Обновить сейчас</button>
+<button type="button" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: {{accent}}; color: #FFFFFF; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+Добавить наличные</button>
+</div>
+</header>
+
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+<div style="flex: 1 1 280px; position: relative; display: flex; align-items: center">
+<label for="search" style="position: absolute; left: 14px; display: flex; color: #5B6068">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Поиск по товарам и магазинам</span>
+</label>
+<input id="search" type="search" placeholder="Найти товар или магазин, например «сыр»" style="width: 100%; min-height: 44px; box-sizing: border-box; padding: 0 14px 0 42px; border: 1px solid #CFD3CC; border-radius: 12px; font: inherit; font-size: 15px; background: #FFFFFF; color: #15171A">
+</div>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; color: #15171A; cursor: pointer">Магазин ▾</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; color: #15171A; cursor: pointer">Категория ▾</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; color: #15171A; cursor: pointer">Сумма ▾</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; color: #15171A; cursor: pointer">Источник ▾</button>
+</div>
+
+<div role="tablist" aria-label="Фильтр чеков" style="display: flex; gap: 24px; border-bottom: 1px solid #E3E5E0">
+<button type="button" role="tab" aria-selected="{{allSel}}" onClick="{{showAll}}" style="{{allStyle}}">Все · 47</button>
+<button type="button" role="tab" aria-selected="{{attSel}}" onClick="{{showAttention}}" style="{{attStyle}}">Требуют внимания · 3</button>
+</div>
+
+<sc-if value="{{isAll}}" hint-placeholder-val="{{ true }}">
+<div style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; overflow-x: auto">
+<table style="width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14px">
+<thead>
+<tr style="text-align: left; color: #5B6068; font-size: 13px">
+<th scope="col" style="padding: 14px 20px; font-weight: 500">Магазин</th>
+<th scope="col" style="padding: 14px 12px; font-weight: 500">Время</th>
+<th scope="col" style="padding: 14px 12px; font-weight: 500">Что внутри</th>
+<th scope="col" style="padding: 14px 12px; font-weight: 500">Источник</th>
+<th scope="col" style="padding: 14px 20px; font-weight: 500; text-align: right">Сумма</th>
+</tr>
+</thead>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+<tbody>
+<tr style="background: #F7F8F5">
+<th scope="rowgroup" colspan="4" style="padding: 10px 20px; text-align: left; font-size: 13px; font-weight: 600; color: #3D4249">{{g.date}}</th>
+<td style="padding: 10px 20px; text-align: right; font-size: 13px; color: #5B6068">{{g.total}}</td>
+</tr>
+<sc-for list="{{g.rows}}" as="r" hint-placeholder-count="2">
+<tr style="border-top: 1px solid #EEF0EC">
+<td style="padding: 12px 20px">
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 12px; color: #15171A; text-decoration: none; min-height: 40px">
+<span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 10px; background: {{r.tint}}; color: {{r.color}}; display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none">{{r.initial}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{r.store}}</span><span style="font-size: 13px; color: #5B6068">{{r.items}}</span></span>
+</a>
+</td>
+<td style="padding: 12px; color: #5B6068">{{r.time}}</td>
+<td style="padding: 12px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{r.cats}}" as="c" hint-placeholder-count="2">
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 8px; border-radius: 6px; background: #F4F5F2"><span style="width: 8px; height: 8px; border-radius: 2px; background: {{c.color}}"></span>{{c.name}}</span>
+</sc-for>
+</div>
+</td>
+<td style="padding: 12px"><span style="font-size: 12px; color: #5B6068; background: #F1F2EF; border-radius: 6px; padding: 3px 8px">{{r.source}}</span></td>
+<td style="padding: 12px 20px; text-align: right; font-weight: 600">{{r.sum}}</td>
+</tr>
+</sc-for>
+</tbody>
+</sc-for>
+</table>
+<div style="padding: 16px 20px; border-top: 1px solid #EEF0EC">
+<button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; color: #15171A; cursor: pointer">Показать ещё 39 чеков</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isAttention}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #5B6068">Эти письма похожи на чеки, но разобрать их автоматически не получилось. Остальные чеки уже в статистике.</p>
+<sc-for list="{{attention}}" as="a" hint-placeholder-count="3">
+<div style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 12px; background: #FBEDE4; color: #A2440F; display: flex; align-items: center; justify-content: center; flex: none">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16.5v.5"></path><circle cx="12" cy="12" r="9"></circle></svg>
+</span>
+<div style="flex: 1 1 280px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-weight: 600; font-size: 15px">{{a.title}}</span>
+<span style="font-size: 14px; color: #5B6068">{{a.detail}}</span>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #CFD3CC; background: #FFFFFF; font: inherit; font-size: 14px; color: #15171A; cursor: pointer">Открыть письмо</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 12px; border: 0; background: {{accent}}; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{a.action}}</button>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0F6B4B","options":["#0F6B4B","#2E5BD8","#15171A"]},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'all' };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#0F6B4B';
+    const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
+    const C = {
+      food: { name: 'Продукты', color: '#2E6BD8' },
+      market: { name: 'Маркетплейсы', color: '#E0782F' },
+      cafe: { name: 'Кафе и кофе', color: '#8A56D6' },
+      home: { name: 'Дом и химия', color: '#B8901A' },
+      health: { name: 'Здоровье', color: '#12907F' }
+    };
+    const blue = { color: '#2E6BD8', tint: '#E6EEFB' };
+    const row = (store, initial, items, time, cats, source, sum, look) => ({ store, initial, items, time, cats: cats.map((k) => C[k]), source, sum: rub(sum), color: look.color, tint: look.tint });
+    const groups = [
+      { date: 'Сегодня, 13 октября', total: rub(3330), rows: [
+        row('Пятёрочка', 'П', '12 позиций', '14:02', ['food', 'home'], 'почта', 1870, blue),
+        row('Кофейня на Лесной', 'К', '2 позиции', '09:41', ['cafe'], 'почта', 380, { color: '#8A56D6', tint: '#F0E9FA' }),
+        row('Рынок', 'Р', 'без чека', '—', ['food'], 'наличные', 1080, { color: '#5B6068', tint: '#EEF0EC' })
+      ] },
+      { date: 'Вчера, 12 октября', total: rub(2830), rows: [
+        row('ВкусВилл', 'В', '9 позиций', '19:15', ['food'], 'почта', 2830, blue)
+      ] },
+      { date: '11 октября', total: rub(6150), rows: [
+        row('Ozon', 'O', '3 позиции', '10:20', ['market', 'home'], 'почта', 4990, { color: '#B85A17', tint: '#FBEDE4' }),
+        row('Магнит', 'М', '6 позиций', '18:47', ['food'], 'почта', 1160, blue)
+      ] },
+      { date: '10 октября', total: rub(640), rows: [
+        row('Пятёрочка', 'П', '5 позиций', '20:05', ['food'], 'почта', 640, blue)
+      ] }
+    ];
+    const attention = [
+      { title: 'Письмо от оператора фискальных данных', detail: '9 октября · формат письма пока не поддерживается', action: 'Разобрать через LLM' },
+      { title: 'Ozon · заказ от 6 октября', detail: 'В письме только ссылка на чек, позиций нет', action: 'Загрузить по ссылке' },
+      { title: 'Магнит · 4 октября', detail: 'Сумма позиций 1 240 ₽ не сходится с итогом 1 310 ₽', action: 'Проверить вручную' }
+    ];
+    const tab = this.state.tab;
+    const tabStyle = (on) => 'min-height: 44px; padding: 0 2px; margin-bottom: -1px; border: 0; background: transparent; font: inherit; font-size: 15px; cursor: pointer; ' +
+      (on ? 'color: #15171A; font-weight: 600; border-bottom: 2px solid ' + accent : 'color: #5B6068; font-weight: 500; border-bottom: 2px solid transparent');
+    return {
+      accent, groups, attention,
+      isAll: tab === 'all', isAttention: tab === 'attention',
+      allSel: tab === 'all' ? 'true' : 'false', attSel: tab === 'attention' ? 'true' : 'false',
+      allStyle: tabStyle(tab === 'all'), attStyle: tabStyle(tab === 'attention'),
+      showAll: () => this.setState({ tab: 'all' }),
+      showAttention: () => this.setState({ tab: 'attention' })
+    };
+  }
+}
+</script>
+</body>
+</html>

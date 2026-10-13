@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Дашборд</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F2}
+a{color:#0F6B4B}a:hover{color:#0A4F37}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #F4F5F2; font-family: 'Onest', system-ui, sans-serif; color: #15171A; font-variant-numeric: tabular-nums">
+
+<nav aria-label="Основное меню" style="flex: 1 1 220px; box-sizing: border-box; padding: 24px 16px; background: #FFFFFF; border-right: 1px solid #E3E5E0; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<svg width="34" height="34" viewBox="0 0 40 40" role="img" aria-label="Хау мач"><path d="M8 2H32A6 6 0 0 1 38 8V36L34.4 33L30.8 36L27.2 33L23.6 36L20 33L16.4 36L12.8 33L9.2 36L5.6 33L2 36V8A6 6 0 0 1 8 2Z" fill="{{accent}}"></path><text x="20" y="24.5" text-anchor="middle" font-family="Onest, system-ui, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">хм</text></svg>
+<span aria-hidden="true" style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em"><span style="font-weight: 500">хау</span><span style="color: {{accent}}">мач</span></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<a href="Main.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #15171A; background: #E3F1EA; font-weight: 600; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+Дашборд</a>
+<a href="Receipts.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg>
+Чеки<span style="margin-left: auto; font-size: 12px; font-weight: 600; color: #FFFFFF; background: #C2561A; padding: 2px 7px; border-radius: 10px">3</span></a>
+<a href="Inflation.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+Инфляция<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #0F6B4B; background: #E3F1EA; padding: 2px 6px; border-radius: 6px">Pro</span></a>
+<a href="#chat" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>
+Вопросы<span style="margin-left: auto; font-size: 11px; font-weight: 600; color: #0F6B4B; background: #E3F1EA; padding: 2px 6px; border-radius: 6px">Pro</span></a>
+<a href="#settings" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: #3D4249; font-weight: 500; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+Настройки</a>
+</div>
+<div style="margin-top: auto; padding: 16px; border-radius: 12px; background: #F4F5F2; display: flex; flex-direction: column; gap: 6px">
+<div style="font-weight: 600; font-size: 14px">Pro · пробный период</div>
+<div style="font-size: 13px; line-height: 1.45; color: #5B6068">Осталось 11 дней, затем 249 ₽ в месяц.</div>
+<a href="Pricing.dc.html" style="font-size: 13px; font-weight: 600; text-decoration: none; min-height: 32px; display: flex; align-items: center">Управлять подпиской →</a>
+</div>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 24px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.01em">Октябрь 2026</h1>
+<p style="margin: 0; font-size: 14px; color: #5B6068">Обновлено сегодня в 14:20 · 2 почтовых ящика подключены</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<div role="group" aria-label="Период" style="display: flex; padding: 4px; gap: 4px; background: #E9EBE6; border-radius: 12px">
+<sc-for list="{{periods}}" as="p" hint-placeholder-count="4">
+<button type="button" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="{{p.style}}">{{p.label}}</button>
+</sc-for>
+</div>
+<a href="Receipts.dc.html" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 12px; background: {{accent}}; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 14px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+Добавить наличные</a>
+</div>
+</header>
+
+<section aria-label="Итоги" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px">
+<div style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; color: #5B6068">Потрачено с 1 октября</div>
+<div style="font-size: 30px; font-weight: 700; letter-spacing: -0.01em">38&nbsp;420&nbsp;₽</div>
+<div style="font-size: 13px; color: #0F6B4B; font-weight: 600">−6% к 1–13 сентября</div>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; color: #5B6068">Чеков за период</div>
+<div style="font-size: 30px; font-weight: 700; letter-spacing: -0.01em">47</div>
+<a href="Receipts.dc.html" style="font-size: 13px; font-weight: 600; color: #C2561A; text-decoration: none">3 требуют внимания →</a>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; color: #5B6068">Средний чек</div>
+<div style="font-size: 30px; font-weight: 700; letter-spacing: -0.01em">817&nbsp;₽</div>
+<div style="font-size: 13px; color: #5B6068">в сентябре 862 ₽</div>
+</div>
+<a href="Inflation.dc.html" style="background: #FBEDE4; border: 1px solid #F2D3BF; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: #15171A">
+<div style="font-size: 13px; color: #7A3A12">Личная инфляция с мая</div>
+<div style="font-size: 30px; font-weight: 700; letter-spacing: -0.01em; color: #A2440F">+4,8%</div>
+<div style="font-size: 13px; color: #7A3A12">ваша корзина · подробнее →</div>
+</a>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section aria-labelledby="by-day" style="flex: 2 1 480px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap">
+<h2 id="by-day" style="margin: 0; font-size: 17px; font-weight: 600">Траты по дням</h2>
+<span style="font-size: 13px; color: #5B6068">максимум 11 октября — 6 150 ₽</span>
+</div>
+<div style="display: flex; gap: 12px">
+<div aria-hidden="true" style="display: flex; flex-direction: column; justify-content: space-between; height: 180px; font-size: 12px; color: #5B6068; text-align: right; padding-bottom: 24px">
+<span>6 тыс</span><span>3 тыс</span><span>0</span>
+</div>
+<div role="img" aria-label="Столбчатая диаграмма трат с 1 по 13 октября, максимум 11 октября" style="flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 6px; height: 204px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="13">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+<div style="width: 100%; max-width: 36px; height: {{b.h}}px; background: {{b.color}}; border-radius: 6px 6px 2px 2px"></div>
+<span style="font-size: 12px; color: #5B6068; height: 16px">{{b.label}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="by-cat" style="flex: 1 1 320px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 id="by-cat" style="margin: 0; font-size: 17px; font-weight: 600">По категориям</h2>
+<span style="font-size: 13px; color: #5B6068">по товарам</span>
+</div>
+<div aria-hidden="true" style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<div style="width: {{c.w}}; background: {{c.color}}"></div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 14px">
+<span style="width: 10px; height: 10px; border-radius: 3px; background: {{c.color}}; flex: none"></span>
+<span style="flex: 1">{{c.name}}</span>
+<span style="font-weight: 600">{{c.sum}}</span>
+<span style="width: 36px; text-align: right; color: #5B6068">{{c.pct}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section aria-labelledby="recent" style="flex: 2 1 480px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px">
+<h2 id="recent" style="margin: 0; font-size: 17px; font-weight: 600">Последние покупки</h2>
+<a href="Receipts.dc.html" style="font-size: 14px; font-weight: 600; text-decoration: none">Все чеки →</a>
+</div>
+<sc-for list="{{recent}}" as="r" hint-placeholder-count="5">
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 4px; border-top: 1px solid #EEF0EC; text-decoration: none; color: #15171A">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 12px; background: {{r.tint}}; color: {{r.color}}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex: none">{{r.initial}}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="font-weight: 600; font-size: 15px">{{r.store}}</span>
+<span style="font-size: 13px; color: #5B6068">{{r.meta}}</span>
+</span>
+<span style="font-size: 12px; color: #5B6068; background: #F1F2EF; border-radius: 6px; padding: 3px 8px">{{r.source}}</span>
+<span style="font-weight: 600; font-size: 15px; min-width: 84px; text-align: right">{{r.sum}}</span>
+</a>
+</sc-for>
+</section>
+
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<section aria-labelledby="stores" style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<h2 id="stores" style="margin: 0; font-size: 17px; font-weight: 600">Где тратите больше всего</h2>
+<sc-for list="{{stores}}" as="s" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>{{s.name}} <span style="color: #5B6068">· {{s.count}}</span></span><span style="font-weight: 600">{{s.sum}}</span></div>
+<div aria-hidden="true" style="height: 6px; border-radius: 3px; background: #EEF0EC"><div style="height: 6px; border-radius: 3px; width: {{s.w}}; background: {{accent}}"></div></div>
+</div>
+</sc-for>
+</section>
+<section aria-labelledby="products" style="background: #FFFFFF; border: 1px solid #E3E5E0; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px">
+<h2 id="products" style="margin: 0; font-size: 17px; font-weight: 600">Топ товаров</h2>
+<span style="font-size: 11px; font-weight: 600; color: #0F6B4B; background: #E3F1EA; padding: 2px 6px; border-radius: 6px">Pro</span>
+</div>
+<sc-for list="{{products}}" as="p" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 14px; min-height: 28px">
+<span style="width: 18px; color: #5B6068">{{p.n}}</span>
+<span style="flex: 1">{{p.name}} <span style="color: #5B6068">· {{p.qty}}</span></span>
+<span style="font-weight: 600">{{p.sum}}</span>
+</div>
+</sc-for>
+</section>
+</div>
+</div>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#0F6B4B","options":["#0F6B4B","#2E5BD8","#15171A"]},"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { period: 'month' };
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#0F6B4B';
+    const rub = (n) => n.toLocaleString('ru-RU') + ' ₽';
+    const days = [2100, 3450, 1200, 5600, 980, 4300, 2750, 1890, 3200, 640, 6150, 2830, 3330];
+    const max = 6150;
+    const bars = days.map((v, i) => ({
+      label: String(i + 1),
+      h: Math.max(4, Math.round(v / max * 164)),
+      color: v === max ? accent : '#B9D9C9'
+    }));
+    const total = 38420;
+    const cats = [
+      ['Продукты', 16940, '#2E6BD8'],
+      ['Маркетплейсы', 8210, '#E0782F'],
+      ['Кафе и кофе', 4870, '#8A56D6'],
+      ['Здоровье', 4300, '#12907F'],
+      ['Дом и химия', 2650, '#B8901A'],
+      ['Другое', 1450, '#9AA0A8']
+    ].map(([name, sum, color]) => ({
+      name, color, sum: rub(sum),
+      pct: Math.round(sum / total * 100) + '%',
+      w: (sum / total * 100).toFixed(1) + '%'
+    }));
+    const recent = [
+      { store: 'Пятёрочка', meta: '13 окт, 14:02 · 12 позиций', source: 'почта', sum: rub(1870), initial: 'П', color: '#2E6BD8', tint: '#E6EEFB' },
+      { store: 'Кофейня на Лесной', meta: '13 окт, 09:41 · 2 позиции', source: 'почта', sum: rub(380), initial: 'К', color: '#8A56D6', tint: '#F0E9FA' },
+      { store: 'Рынок', meta: '13 окт · без чека', source: 'наличные', sum: rub(1080), initial: 'Р', color: '#5B6068', tint: '#EEF0EC' },
+      { store: 'ВкусВилл', meta: '12 окт, 19:15 · 9 позиций', source: 'почта', sum: rub(2830), initial: 'В', color: '#2E6BD8', tint: '#E6EEFB' },
+      { store: 'Ozon', meta: '11 окт, 10:20 · 3 позиции', source: 'почта', sum: rub(4990), initial: 'O', color: '#B85A17', tint: '#FBEDE4' }
+    ];
+    const storeMax = 9820;
+    const stores = [
+      ['Пятёрочка', 9820, '14 чеков'],
+      ['Ozon', 8210, '5 заказов'],
+      ['ВкусВилл', 7120, '9 чеков'],
+      ['Инвитро', 4300, '1 чек'],
+      ['Магнит', 3400, '6 чеков']
+    ].map(([name, sum, count]) => ({ name, count, sum: rub(sum), w: (sum / storeMax * 100).toFixed(1) + '%' }));
+    const products = [
+      ['Капучино', '7 шт', 2100],
+      ['Кофе в зёрнах', '2 уп', 1980],
+      ['Молоко', '11 шт', 1340],
+      ['Сыр', '3 шт', 1290],
+      ['Куриное филе', '4 уп', 1180]
+    ].map(([name, qty, sum], i) => ({ n: i + 1, name, qty, sum: rub(sum) }));
+    const periods = [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц'], ['custom', 'Период']].map(([id, label]) => {
+      const on = this.state.period === id;
+      return {
+        label,
+        pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ period: id }),
+        style: 'min-height: 36px; padding: 0 14px; border: 0; border-radius: 9px; font: inherit; font-size: 14px; cursor: pointer; ' +
+          (on ? 'background: #FFFFFF; color: #15171A; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08)' : 'background: transparent; color: #3D4249; font-weight: 500')
+      };
+    });
+    return { accent, bars, cats, recent, stores, products, periods };
+  }
+}
+</script>
+</body>
+</html>
