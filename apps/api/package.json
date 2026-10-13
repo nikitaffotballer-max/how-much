@@ -16,9 +16,12 @@
     "@fastify/cors": "^11.3.1",
     "@fastify/rate-limit": "^11.2.1",
     "@how-much/db": "workspace:*",
+    "@how-much/mail": "workspace:*",
     "@how-much/shared": "workspace:*",
     "@node-rs/argon2": "^2.2.2",
+    "bullmq": "^6.3.13",
     "fastify": "^5.12.5",
+    "ioredis": "^6.0.0",
     "zod": "^4.6.6"
   },
   "devDependencies": {

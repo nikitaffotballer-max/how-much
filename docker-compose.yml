@@ -23,5 +23,15 @@ services:
       interval: 5s
       retries: 10
 
+  # Тестовый IMAP-сервер для интеграционных тестов почты: docker compose --profile test up -d
+  # Пускает любой логин с паролем app-password; письма живут только до перезапуска контейнера.
+  imap-test:
+    image: dovecot/dovecot:2.4.1
+    profiles: ['test']
+    environment:
+      USER_PASSWORD: app-password
+    ports:
+      - '31993:31993'
+
 volumes:
   postgres-data:

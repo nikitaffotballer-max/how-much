@@ -8,12 +8,15 @@
     "build": "tsup",
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
+    "@how-much/db": "workspace:*",
+    "@how-much/mail": "workspace:*",
     "@how-much/shared": "workspace:*",
     "bullmq": "^6.3.13",
-    "ioredis": "^6.0.0"
+    "ioredis": "^6.0.0",
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

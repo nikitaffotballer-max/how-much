@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
-    # Тесты API работают с настоящей базой — поднимаем PostgreSQL рядом с CI.
+    # Тесты API и воркера работают с настоящей базой, тесты почты — с настоящим IMAP-сервером.
     services:
       postgres:
         image: postgres:17-alpine
@@ -23,9 +23,16 @@ jobs:
           --health-cmd "pg_isready -U howmuch"
           --health-interval 5s
           --health-retries 10
+      imap:
+        image: dovecot/dovecot:2.4.1
+        env:
+          USER_PASSWORD: app-password
+        ports:
+          - 31993:31993
 
     env:
       DATABASE_URL: postgresql://howmuch:howmuch@localhost:5432/howmuch
+      IMAP_TEST_PORT: 31993
 
     steps:
       - uses: actions/checkout@v4

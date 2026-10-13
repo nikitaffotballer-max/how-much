@@ -1,0 +1,23 @@
+{
+  "name": "@how-much/mail",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@how-much/shared": "workspace:*",
+    "imapflow": "^2.4.0",
+    "mailparser": "^3.9.38",
+    "zod": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.9.0",
+    "@types/node": "^26.6.5"
+  }
+}
