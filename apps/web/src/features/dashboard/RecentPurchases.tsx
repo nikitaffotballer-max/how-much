@@ -1,9 +1,7 @@
 import { formatRub, type DashboardSummary } from '@how-much/shared';
 import PaymentsRounded from '@mui/icons-material/PaymentsRounded';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Link } from 'react-router';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { formatPurchaseTime } from '../../lib/dates';
 import { hcColors } from '../../theme/hcTheme';
@@ -46,19 +44,12 @@ export function RecentPurchases({ recent }: Pick<DashboardSummary, 'recent'>) {
         gap: 0.5,
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Typography variant="h2" id="recent-title">
-          Последние покупки
-        </Typography>
-        <Button component={Link} to="/receipts">
-          Все чеки
-        </Button>
-      </Box>
+      <Typography variant="h2" id="recent-title" sx={{ pb: 1 }}>
+        Последние покупки
+      </Typography>
       {recent.map((purchase) => (
         <Box
           key={purchase.id}
-          component={Link}
-          to={`/receipts/${purchase.id}`}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -66,9 +57,6 @@ export function RecentPurchases({ recent }: Pick<DashboardSummary, 'recent'>) {
             minHeight: 72,
             px: 1.5,
             borderRadius: 5,
-            color: 'text.primary',
-            textDecoration: 'none',
-            '&:hover': { bgcolor: hcColors.background },
           }}
         >
           <PurchaseIcon purchase={purchase} />

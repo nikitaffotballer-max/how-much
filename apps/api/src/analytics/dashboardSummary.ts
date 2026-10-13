@@ -98,7 +98,6 @@ export async function getDashboardSummary(
     averageReceipt: average(currentReceipts, total),
     previousAverageReceipt: average(previousReceipts, previousTotal),
     // Индекс личной инфляции появится на этапе 3 (ТЗ, 3.6).
-    personalInflation: null,
     byCategory: [...byCategoryMap]
       .filter(([, amount]) => amount !== 0)
       .map(([category, amount]) => ({ category, total: amount })),

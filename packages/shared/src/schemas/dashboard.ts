@@ -18,10 +18,6 @@ export const dashboardSummarySchema = z.object({
   needsAttentionCount: z.number().int().nonnegative(),
   averageReceipt: kopecks,
   previousAverageReceipt: kopecks,
-  /** null — индекс недоступен (Free или мало данных). */
-  personalInflation: z
-    .object({ since: z.iso.date(), ours: z.number(), official: z.number() })
-    .nullable(),
   byCategory: z.array(z.object({ category: z.enum(HC_CATEGORY_KEYS), total: kopecks })),
   byDay: z.array(z.object({ date: z.iso.date(), total: kopecks })),
   recent: z.array(

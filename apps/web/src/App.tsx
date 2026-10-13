@@ -7,7 +7,6 @@ import { useCurrentUser } from './features/auth/useCurrentUser';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { SettingsPage } from './features/settings/SettingsPage';
 import { AppShell } from './layout/AppShell';
-import { ComingSoonPage } from './pages/ComingSoonPage';
 
 /** Вошедшему пользователю нечего делать на экранах входа — отправляем на дашборд. */
 function GuestOnly({ children }: { children: ReactNode }) {
@@ -47,11 +46,9 @@ export function App() {
       />
       <Route element={<PrivateLayout />}>
         <Route index element={<DashboardPage />} />
-        <Route path="receipts/*" element={<ComingSoonPage title="Чеки" />} />
-        <Route path="inflation" element={<ComingSoonPage title="Личная инфляция" />} />
-        <Route path="ask" element={<ComingSoonPage title="Вопросы" />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="*" element={<ComingSoonPage title="Такой страницы нет" />} />
+        {/* Разделов, которых ещё нет, не показываем: неизвестный адрес ведёт на дашборд. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   );
