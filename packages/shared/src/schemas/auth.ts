@@ -7,12 +7,14 @@ export const emailSchema = z
   .toLowerCase()
   .pipe(z.email({ error: 'Неверный формат email' }));
 
+const newPasswordSchema = z
+  .string()
+  .min(8, { error: 'Пароль должен быть не короче 8 символов' })
+  .max(128, { error: 'Пароль слишком длинный' });
+
 export const credentialsSchema = z.object({
   email: emailSchema,
-  password: z
-    .string()
-    .min(8, { error: 'Пароль должен быть не короче 8 символов' })
-    .max(128, { error: 'Пароль слишком длинный' }),
+  password: newPasswordSchema,
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;
@@ -31,6 +33,24 @@ export const loginSchema = z.object({
 
 export type LoginCredentials = z.infer<typeof loginSchema>;
 
+const currentPasswordSchema = z
+  .string()
+  .min(1, { error: 'Введите текущий пароль' })
+  .max(128, { error: 'Пароль слишком длинный' });
+
+/** POST /api/v1/me/password. */
+export const changePasswordSchema = z.object({
+  currentPassword: currentPasswordSchema,
+  newPassword: newPasswordSchema,
+});
+
+export type ChangePassword = z.infer<typeof changePasswordSchema>;
+
+/** DELETE /api/v1/me: удаление необратимо, поэтому просим пароль ещё раз. */
+export const deleteAccountSchema = z.object({ password: currentPasswordSchema });
+
+export type DeleteAccount = z.infer<typeof deleteAccountSchema>;
+
 /** Ответ GET /api/v1/me и успешных /auth/register, /auth/login. */
 export const currentUserSchema = z.object({
   id: z.string(),
@@ -39,6 +59,9 @@ export const currentUserSchema = z.object({
   subscriptionStatus: z.enum(['trialing', 'active', 'past_due', 'canceled', 'expired']).nullable(),
   /** Конец пробного или оплаченного периода; null — подписки нет. */
   periodEndsAt: z.iso.datetime().nullable(),
+  /** Пользователь отменил продление: Pro работает до periodEndsAt и не продлевается. */
+  cancelAtPeriodEnd: z.boolean(),
+  createdAt: z.iso.datetime(),
 });
 
 export type CurrentUser = z.infer<typeof currentUserSchema>;

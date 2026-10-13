@@ -52,3 +52,12 @@ export async function resolveSession(db: PrismaClient, token: string): Promise<s
 export async function deleteSession(db: PrismaClient, token: string): Promise<void> {
   await db.session.deleteMany({ where: { tokenHash: hashToken(token) } });
 }
+
+/** После смены пароля выходим на всех устройствах, кроме текущего. */
+export async function deleteOtherSessions(
+  db: PrismaClient,
+  userId: string,
+  keepToken: string,
+): Promise<void> {
+  await db.session.deleteMany({ where: { userId, tokenHash: { not: hashToken(keepToken) } } });
+}
