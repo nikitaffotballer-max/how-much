@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { HC_CATEGORY_KEYS } from '../categories.js';
+import { receiptListItemSchema } from './receipts.js';
 
 const kopecks = z.number().int();
 
@@ -20,17 +21,7 @@ export const dashboardSummarySchema = z.object({
   previousAverageReceipt: kopecks,
   byCategory: z.array(z.object({ category: z.enum(HC_CATEGORY_KEYS), total: kopecks })),
   byDay: z.array(z.object({ date: z.iso.date(), total: kopecks })),
-  recent: z.array(
-    z.object({
-      id: z.string(),
-      merchant: z.string(),
-      category: z.enum(HC_CATEGORY_KEYS),
-      purchasedAt: z.iso.datetime(),
-      source: z.enum(['email', 'cash', 'manual']),
-      itemsPreview: z.string(),
-      total: kopecks,
-    }),
-  ),
+  recent: z.array(receiptListItemSchema),
 });
 
 export type DashboardSummary = z.infer<typeof dashboardSummarySchema>;

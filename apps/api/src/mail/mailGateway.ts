@@ -4,21 +4,26 @@ import {
   HC_MAIL_SYNC_JOB_OPTIONS,
   HC_MAIL_SYNC_JOBS,
   HC_QUEUES,
+  HC_RECEIPT_PARSE_JOB_OPTIONS,
+  receiptParseJobId,
   mailSyncJobId,
   type MailProviderKey,
   type MailSyncJob,
+  type ReceiptParseJob,
 } from '@how-much/shared';
 import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
 
 /**
- * Всё, что API нужно от почты: проверить вход и поставить синхронизацию в очередь.
+ * Всё, что API нужно от почты: проверить вход и поставить синхронизацию или разбор в очередь.
  * Отдельный интерфейс, чтобы в тестах подменить IMAP и Redis.
  */
 export interface MailGateway {
   /** Бросает HCMailAuthError или HCMailConnectionError из @how-much/mail. */
   verifyLogin(provider: MailProviderKey, credentials: MailCredentials): Promise<void>;
   enqueueSync(mailAccountId: string): Promise<void>;
+  /** Повторный разбор письма, которое не получилось разобрать автоматически. */
+  enqueueReceiptParse(rawEmailId: string): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -26,6 +31,7 @@ export function createMailGateway(redisUrl: string): MailGateway {
   // Без очереди офлайн-команд: если Redis лежит, запрос пользователя не повиснет, а сразу получит ошибку.
   const connection = new Redis(redisUrl, { enableOfflineQueue: false });
   const queue = new Queue<MailSyncJob>(HC_QUEUES.mailSync, { connection });
+  const parseQueue = new Queue<ReceiptParseJob>(HC_QUEUES.receiptParse, { connection });
 
   return {
     // API ходит в почту только здесь: один вход для проверки пароля, письма читает воркер.
@@ -40,8 +46,16 @@ export function createMailGateway(redisUrl: string): MailGateway {
       );
     },
 
+    async enqueueReceiptParse(rawEmailId) {
+      await parseQueue.add(
+        'parse',
+        { rawEmailId },
+        { ...HC_RECEIPT_PARSE_JOB_OPTIONS, jobId: receiptParseJobId(rawEmailId) },
+      );
+    },
+
     async close() {
-      await queue.close();
+      await Promise.all([queue.close(), parseQueue.close()]);
       await connection.quit();
     },
   };

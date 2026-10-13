@@ -11,6 +11,7 @@ import { analyticsRoutes } from './routes/analytics.js';
 import { authRoutes } from './routes/auth.js';
 import { healthRoutes } from './routes/health.js';
 import { mailAccountRoutes } from './routes/mailAccounts.js';
+import { receiptRoutes } from './routes/receipts.js';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -61,6 +62,7 @@ export async function buildApp(
       await api.register(authRoutes);
       await api.register(analyticsRoutes);
       await api.register(mailAccountRoutes(mail));
+      await api.register(receiptRoutes(mail));
     },
     { prefix: '/api/v1' },
   );

@@ -7,3 +7,4 @@ export * from './mailProviders.js';
 export * from './schemas/auth.js';
 export * from './schemas/dashboard.js';
 export * from './schemas/mailAccounts.js';
+export * from './schemas/receipts.js';

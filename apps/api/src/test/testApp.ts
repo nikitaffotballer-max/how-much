@@ -17,17 +17,22 @@ export function uniqueTestEmail(): string {
 export interface FakeMailGateway extends MailGateway {
   verifyError: Error | null;
   syncRequests: string[];
+  parseRequests: string[];
 }
 
 export function createFakeMailGateway(): FakeMailGateway {
   const fake: FakeMailGateway = {
     verifyError: null,
     syncRequests: [],
+    parseRequests: [],
     async verifyLogin() {
       if (fake.verifyError) throw fake.verifyError;
     },
     async enqueueSync(mailAccountId: string) {
       fake.syncRequests.push(mailAccountId);
+    },
+    async enqueueReceiptParse(rawEmailId: string) {
+      fake.parseRequests.push(rawEmailId);
     },
     async close() {},
   };
