@@ -22,6 +22,8 @@ export type FetchEmails = (
 export interface SyncDeps {
   db: PrismaClient;
   encryptionKey: Buffer;
+  /** Ставит сохранённое письмо в очередь разбора. */
+  enqueueParse: (rawEmailId: string) => Promise<void>;
   /** В тестах подменяется, чтобы не ходить на настоящий IMAP-сервер. */
   fetchEmails?: FetchEmails;
   now?: Date;
@@ -37,11 +39,17 @@ function monthsAgo(date: Date, months: number): Date {
 }
 
 /**
- * Забирает новые письма-чеки из ящика и сохраняет их как RawEmail в статусе pending.
- * Разбор писем на позиции — отдельный шаг (ТЗ, 3.3).
+ * Забирает новые письма-чеки из ящика, сохраняет их как RawEmail в статусе pending
+ * и сразу ставит каждое в очередь разбора (ТЗ, 3.3).
  */
 export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Promise<SyncResult> {
-  const { db, encryptionKey, fetchEmails = fetchReceiptEmails, now = new Date() } = deps;
+  const {
+    db,
+    encryptionKey,
+    enqueueParse,
+    fetchEmails = fetchReceiptEmails,
+    now = new Date(),
+  } = deps;
 
   const account = await db.mailAccount.findUnique({
     where: { id: mailAccountId },
@@ -70,7 +78,7 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
       range,
     )) {
       // skipDuplicates: письмо, сохранённое прошлой (оборвавшейся) синхронизацией, пропускаем.
-      const { count } = await db.rawEmail.createMany({
+      const created = await db.rawEmail.createManyAndReturn({
         data: {
           mailAccountId,
           messageId: email.messageId,
@@ -81,8 +89,10 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
           deleteAfter,
         },
         skipDuplicates: true,
+        select: { id: true },
       });
-      saved += count;
+      for (const { id } of created) await enqueueParse(id);
+      saved += created.length;
       lastUid = Math.max(lastUid ?? 0, email.uid);
     }
   } catch (error) {

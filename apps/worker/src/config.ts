@@ -5,6 +5,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, { error: 'DATABASE_URL обязателен' }),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   MAIL_ENCRYPTION_KEY: encryptionKeyEnvSchema,
+  /** Путь к Claude Code CLI, если его нет в PATH (на Windows он лежит внутри приложения Claude). */
+  CLAUDE_CLI_PATH: z.string().default('claude'),
+  /** Модель для разбора чеков: haiku — быстрее и экономнее, sonnet — точнее. */
+  LLM_MODEL: z.string().default('haiku'),
 });
 
 export type WorkerConfig = z.infer<typeof envSchema>;

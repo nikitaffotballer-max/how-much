@@ -8,6 +8,11 @@ const TEST_EMAIL_DOMAIN = 'test.how-much.local';
 const db = createPrismaClient(process.env.DATABASE_URL ?? '');
 const encryptionKey = randomBytes(32);
 const now = new Date('2026-10-13T12:00:00Z');
+/** Очередь разбора: запоминаем, какие письма в неё поставили. */
+const parseQueue: string[] = [];
+const enqueueParse = async (rawEmailId: string) => {
+  parseQueue.push(rawEmailId);
+};
 
 afterAll(async () => {
   await db.user.deleteMany({ where: { email: { endsWith: `@${TEST_EMAIL_DOMAIN}` } } });
@@ -60,7 +65,7 @@ describe('syncMailAccount', () => {
     const mailbox = fakeMailbox([receiptEmail(5), receiptEmail(9)]);
 
     const result = await syncMailAccount(
-      { db, encryptionKey, now, fetchEmails: mailbox.fetchEmails },
+      { db, encryptionKey, enqueueParse, now, fetchEmails: mailbox.fetchEmails },
       account.id,
     );
 
@@ -80,12 +85,13 @@ describe('syncMailAccount', () => {
       ['<5@ofd.ru>', 'pending'],
       ['<9@ofd.ru>', 'pending'],
     ]);
+    expect(parseQueue).toEqual(expect.arrayContaining(saved.rawEmails.map((raw) => raw.id)));
     expect(saved.rawEmails[0]?.deleteAfter).toEqual(new Date(now.getTime() + RAW_EMAIL_TTL_MS));
   });
 
   it('продолжает с последнего UID и не дублирует письма после обрыва', async () => {
     const account = await createAccount();
-    const deps = { db, encryptionKey, now };
+    const deps = { db, encryptionKey, enqueueParse, now };
     await syncMailAccount(
       { ...deps, fetchEmails: fakeMailbox([receiptEmail(5)]).fetchEmails },
       account.id,
@@ -107,7 +113,10 @@ describe('syncMailAccount', () => {
   it('на Free забирает чеки только за 3 месяца', async () => {
     const account = await createAccount('expired');
     const mailbox = fakeMailbox([]);
-    await syncMailAccount({ db, encryptionKey, now, fetchEmails: mailbox.fetchEmails }, account.id);
+    await syncMailAccount(
+      { db, encryptionKey, enqueueParse, now, fetchEmails: mailbox.fetchEmails },
+      account.id,
+    );
     expect(mailbox.calls[0]?.[2].since).toEqual(new Date('2026-07-13T12:00:00Z'));
   });
 
@@ -119,7 +128,10 @@ describe('syncMailAccount', () => {
       throw new HCMailAuthError('Почта не приняла пароль');
     };
 
-    const result = await syncMailAccount({ db, encryptionKey, now, fetchEmails }, account.id);
+    const result = await syncMailAccount(
+      { db, encryptionKey, enqueueParse, now, fetchEmails },
+      account.id,
+    );
 
     expect(result).toEqual({ status: 'auth_failed' });
     const saved = await db.mailAccount.findUniqueOrThrow({ where: { id: account.id } });
@@ -127,7 +139,7 @@ describe('syncMailAccount', () => {
   });
 
   it('пропускает удалённый ящик', async () => {
-    const result = await syncMailAccount({ db, encryptionKey, now }, randomUUID());
+    const result = await syncMailAccount({ db, encryptionKey, enqueueParse, now }, randomUUID());
     expect(result).toEqual({ status: 'skipped' });
   });
 });

@@ -38,3 +38,15 @@ export const HC_MAIL_SYNC_JOB_OPTIONS = {
   removeOnComplete: true,
   removeOnFail: true,
 } as const;
+
+/** Разбор письма в чек. Повторы — только на случай, если модель не ответила. */
+export const HC_RECEIPT_PARSE_JOB_OPTIONS = {
+  attempts: 3,
+  backoff: { type: 'exponential', delay: 60_000 },
+  removeOnComplete: true,
+  removeOnFail: true,
+} as const;
+
+export function receiptParseJobId(rawEmailId: string): string {
+  return `parse-${rawEmailId}`;
+}
