@@ -4,6 +4,7 @@ import {
   credentialsSchema,
   deleteAccountSchema,
   effectivePlan,
+  HC_TRIAL_DAYS,
   loginSchema,
   type CurrentUser,
 } from '@how-much/shared';
@@ -18,8 +19,6 @@ import {
   SESSION_TTL_MS,
 } from '../auth/session.js';
 import { HCHttpError, unauthorized } from '../errors.js';
-
-const TRIAL_DAYS = 14;
 
 /** Защита от перебора паролей: не больше 10 попыток в минуту с одного IP. */
 const authRateLimit = { rateLimit: { max: 10, timeWindow: '1 minute' } };
@@ -71,7 +70,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         subscription: {
           create: {
             status: 'trialing',
-            currentPeriodEnd: new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000),
+            currentPeriodEnd: new Date(Date.now() + HC_TRIAL_DAYS * 24 * 60 * 60 * 1000),
           },
         },
       },

@@ -66,3 +66,9 @@ export function effectivePlan(subject: AccessSubject): Plan {
 export function can(subject: AccessSubject, feature: Feature): boolean {
   return HC_PLAN_LIMITS[effectivePlan(subject)].features.has(feature);
 }
+
+/** Пробный Pro при регистрации (ТЗ, раздел 4). */
+export const HC_TRIAL_DAYS = 14;
+
+/** Цены Pro в копейках (ТЗ, раздел 4). */
+export const HC_PRO_PRICES = { month: 24_900, year: 239_000 } as const;
