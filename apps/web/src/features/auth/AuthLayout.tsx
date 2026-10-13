@@ -4,6 +4,7 @@ import TrendingUpRounded from '@mui/icons-material/TrendingUpRounded';
 import type { SvgIconComponent } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { Link } from 'react-router';
 import type { ReactNode } from 'react';
 import { HCLogo } from '../../components/HCLogo';
 import { ReceiptCoinsIllustration } from '../../illustrations/ReceiptCoinsIllustration';
@@ -22,7 +23,14 @@ function Brand() {
     <Box
       sx={{ gridArea: 'brand', display: 'flex', flexDirection: 'column', gap: { xs: 2, md: 4 } }}
     >
-      <HCLogo />
+      <Box
+        component={Link}
+        to="/"
+        aria-label="На главную"
+        sx={{ color: 'inherit', textDecoration: 'none', alignSelf: 'flex-start' }}
+      >
+        <HCLogo />
+      </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         <Typography
           component="p"

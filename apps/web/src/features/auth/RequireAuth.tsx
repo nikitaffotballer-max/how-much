@@ -3,6 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router';
 import { hcColors } from '../../theme/hcTheme';
+import { LandingPage } from '../landing/LandingPage';
 import { useCurrentUser } from './useCurrentUser';
 
 /** Пока проверяем сессию — контур приложения, чтобы после загрузки ничего не прыгало. */
@@ -44,7 +45,7 @@ function ShellSkeleton() {
   );
 }
 
-/** Пускает дальше только вошедших. Гостя отправляет на вход и запоминает, куда он шёл. */
+/** Пускает дальше только вошедших. Гостя отправляет на вход и запоминает, куда он шёл; на главной показывает лендинг. */
 export function RequireAuth({ children }: { children: ReactNode }) {
   const user = useCurrentUser();
   const location = useLocation();
@@ -52,6 +53,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   if (user.isPending) return <ShellSkeleton />;
 
   if (!user.data) {
+    // Гость на главной видит лендинг, на остальных адресах — вход.
+    if (location.pathname === '/') return <LandingPage />;
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
