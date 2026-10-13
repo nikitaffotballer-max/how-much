@@ -10,9 +10,11 @@ import {
   dashboardSummarySchema,
   mailAccountListSchema,
   mailAccountSchema,
+  type ChangePassword,
   type ConnectMailAccount,
   type CreateCashReceipt,
   type DashboardQuery,
+  type DeleteAccount,
   type Credentials,
   type LoginCredentials,
   type CurrentUser,
@@ -84,6 +86,9 @@ export const hcApi = {
   login: (credentials: LoginCredentials) =>
     request('/auth/login', currentUserSchema, { method: 'POST', body: credentials }),
   logout: () => request('/auth/logout', noContent, { method: 'POST' }),
+  changePassword: (body: ChangePassword) =>
+    request('/me/password', noContent, { method: 'POST', body }),
+  deleteAccount: (body: DeleteAccount) => request('/me', noContent, { method: 'DELETE', body }),
   getDashboardSummary: (query: DashboardQuery): Promise<DashboardSummary> =>
     request(`/analytics/summary?${new URLSearchParams(query)}`, dashboardSummarySchema),
   getMailAccounts: () => request('/mail-accounts', mailAccountListSchema),
