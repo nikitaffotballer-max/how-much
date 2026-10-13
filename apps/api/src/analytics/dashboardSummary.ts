@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@how-much/db';
-import type { CategoryKey, DashboardSummary } from '@how-much/shared';
+import type { CategoryKey, DashboardQuery, DashboardSummary } from '@how-much/shared';
 import {
   itemCategory,
   mainCategory,
@@ -7,25 +7,32 @@ import {
   receiptWithItems,
   toReceiptListItem,
 } from '../receipts/receiptView.js';
-import { monthToDate, moscowDateKey } from './period.js';
+import { moscowDateKey, resolveRange, type Period } from './period.js';
 
 const RECENT_LIMIT = 5;
+const TOP_MERCHANTS_LIMIT = 5;
 const sum = (values: number[]) => values.reduce((acc, value) => acc + value, 0);
 
+/** Даты включительно: полуинтервал [from, to) заканчивается за миллисекунду до to. */
+function dateRange({ from, to }: Period) {
+  return { from: moscowDateKey(from), to: moscowDateKey(new Date(to.getTime() - 1)) };
+}
+
 /**
- * Сводка для дашборда: текущий месяц и те же дни прошлого.
- * Чеков у одного человека за два месяца — сотни, поэтому считаем в памяти; если упрёмся
+ * Сводка для дашборда за выбранный период и такой же отрезок перед ним.
+ * Чеков у одного человека за два периода — сотни, поэтому считаем в памяти; если упрёмся
  * в скорость (ТЗ: 300 мс на 10 000 чеков), перенесём агрегацию в SQL.
  */
 export async function getDashboardSummary(
   db: PrismaClient,
   userId: string,
+  query: DashboardQuery,
   now: Date = new Date(),
 ): Promise<DashboardSummary> {
-  const { current, previous, days } = monthToDate(now);
+  const { current, previous, days } = resolveRange(query, now);
 
   const receipts = await db.receipt.findMany({
-    where: { userId, purchasedAt: { gte: previous.from, lte: current.to } },
+    where: { userId, purchasedAt: { gte: previous.from, lt: current.to } },
     orderBy: { purchasedAt: 'desc' },
     include: receiptWithItems,
   });
@@ -58,12 +65,26 @@ export async function getDashboardSummary(
     dayTotals.set(key, (dayTotals.get(key) ?? 0) + receipt.totalKopecks);
   }
 
+  const merchants = new Map<string, DashboardSummary['topMerchants'][number]>();
+  for (const receipt of currentReceipts) {
+    if (!receipt.merchant) continue;
+    const entry = merchants.get(receipt.merchant.id) ?? {
+      name: receipt.merchant.displayName,
+      total: 0,
+      receiptsCount: 0,
+    };
+    entry.total += receipt.totalKopecks;
+    entry.receiptsCount += 1;
+    merchants.set(receipt.merchant.id, entry);
+  }
+
   const needsAttentionCount = await db.rawEmail.count({
     where: { mailAccount: { userId }, parseStatus: 'failed' },
   });
 
   return {
-    period: { from: days[0] ?? moscowDateKey(current.from), to: moscowDateKey(current.to) },
+    period: { kind: query.period, ...dateRange(current) },
+    previousPeriod: dateRange(previous),
     total,
     previousTotal,
     receiptsCount: currentReceipts.length,
@@ -74,6 +95,9 @@ export async function getDashboardSummary(
       .filter(([, amount]) => amount !== 0)
       .map(([category, amount]) => ({ category, total: amount })),
     byDay: days.map((date) => ({ date, total: dayTotals.get(date) ?? 0 })),
-    recent: receipts.slice(0, RECENT_LIMIT).map(toReceiptListItem),
+    topMerchants: [...merchants.values()]
+      .sort((a, b) => b.total - a.total)
+      .slice(0, TOP_MERCHANTS_LIMIT),
+    recent: currentReceipts.slice(0, RECENT_LIMIT).map(toReceiptListItem),
   };
 }
