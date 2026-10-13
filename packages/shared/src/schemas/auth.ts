@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 /** Email приводим к нижнему регистру: «Ivan@Mail.ru» и «ivan@mail.ru» — один аккаунт. */
-const email = z
+export const emailSchema = z
   .string()
   .trim()
   .toLowerCase()
   .pipe(z.email({ error: 'Неверный формат email' }));
 
 export const credentialsSchema = z.object({
-  email,
+  email: emailSchema,
   password: z
     .string()
     .min(8, { error: 'Пароль должен быть не короче 8 символов' })

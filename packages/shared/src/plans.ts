@@ -17,6 +17,8 @@ export type Feature =
 
 export interface PlanLimits {
   mailAccounts: number;
+  /** За сколько месяцев забираем чеки при первом подключении почты (ТЗ, 3.2). */
+  importMonths: number;
   historyMonths: number | null;
   askPerDay: number;
   features: ReadonlySet<Feature>;
@@ -33,8 +35,14 @@ const PRO_FEATURES: ReadonlySet<Feature> = new Set<Feature>([
 ]);
 
 export const HC_PLAN_LIMITS: Record<Plan, PlanLimits> = {
-  free: { mailAccounts: 1, historyMonths: 3, askPerDay: 0, features: new Set() },
-  pro: { mailAccounts: 5, historyMonths: null, askPerDay: 50, features: PRO_FEATURES },
+  free: { mailAccounts: 1, importMonths: 3, historyMonths: 3, askPerDay: 0, features: new Set() },
+  pro: {
+    mailAccounts: 5,
+    importMonths: 12,
+    historyMonths: null,
+    askPerDay: 50,
+    features: PRO_FEATURES,
+  },
 };
 
 export interface AccessSubject {
