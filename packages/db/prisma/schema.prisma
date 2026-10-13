@@ -71,8 +71,9 @@ model MailAccount {
   encryptedPassword String
   status            MailAccountStatus @default(active)
   lastSyncAt        DateTime?
-  /// UID последнего прочитанного письма в IMAP — чтобы не перечитывать ящик целиком.
-  lastUid           Int?
+  /// Докуда дочитана каждая папка: { "INBOX/Receipts": { uidValidity, lastUid } }.
+  /// UID в IMAP уникален только внутри папки, поэтому позиция у каждой своя.
+  folderCursors     Json              @default("{}")
   createdAt         DateTime          @default(now())
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
