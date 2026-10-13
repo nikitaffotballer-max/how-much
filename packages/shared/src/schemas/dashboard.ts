@@ -42,6 +42,8 @@ export const dashboardSummarySchema = z.object({
   total: kopecks,
   previousTotal: kopecks,
   receiptsCount: z.number().int().nonnegative(),
+  /** Есть ли у пользователя чеки вообще — чтобы отличить новичка от пустого периода. */
+  hasReceipts: z.boolean(),
   needsAttentionCount: z.number().int().nonnegative(),
   averageReceipt: kopecks,
   previousAverageReceipt: kopecks,

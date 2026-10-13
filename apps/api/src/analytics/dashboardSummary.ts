@@ -82,12 +82,17 @@ export async function getDashboardSummary(
     where: { mailAccount: { userId }, parseStatus: 'failed' },
   });
 
+  const hasReceipts =
+    receipts.length > 0 ||
+    (await db.receipt.findFirst({ where: { userId }, select: { id: true } })) !== null;
+
   return {
     period: { kind: query.period, ...dateRange(current) },
     previousPeriod: dateRange(previous),
     total,
     previousTotal,
     receiptsCount: currentReceipts.length,
+    hasReceipts,
     needsAttentionCount,
     averageReceipt: average(currentReceipts, total),
     previousAverageReceipt: average(previousReceipts, previousTotal),

@@ -28,7 +28,12 @@ describe('GET /api/v1/analytics/summary', () => {
     const { token } = await registerTestUser(app);
     const summary = dashboardSummarySchema.parse((await getSummary(token)).json());
 
-    expect(summary).toMatchObject({ total: 0, receiptsCount: 0, averageReceipt: 0 });
+    expect(summary).toMatchObject({
+      total: 0,
+      receiptsCount: 0,
+      averageReceipt: 0,
+      hasReceipts: false,
+    });
     expect(summary.byCategory).toEqual([]);
     expect(summary.byDay.every((day) => day.total === 0)).toBe(true);
   });
