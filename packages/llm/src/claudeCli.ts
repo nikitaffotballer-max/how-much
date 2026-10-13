@@ -1,5 +1,7 @@
 import { spawn } from 'node:child_process';
+import { mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { z } from 'zod';
 import { HCLlmError, type LlmProvider, type LlmRequest } from './provider.js';
 
@@ -49,6 +51,11 @@ export function createClaudeCliProvider({
   model = 'haiku',
   timeoutMs = 120_000,
 }: ClaudeCliOptions = {}): LlmProvider {
+  // Своя пустая папка: иначе CLI подхватит CLAUDE.md и настройки проекта. Создаём её сами —
+  // если папки нет, spawn падает с той же ошибкой ENOENT, что и при неверном пути к CLI.
+  const workDir = join(tmpdir(), 'how-much-llm');
+  mkdirSync(workDir, { recursive: true });
+
   return {
     name: `claude-cli:${model}`,
 
@@ -72,8 +79,7 @@ export function createClaudeCliProvider({
       ];
 
       return new Promise<z.infer<TSchema>>((resolve, reject) => {
-        // Пустая временная папка: иначе CLI подхватит CLAUDE.md и настройки проекта.
-        const child = spawn(binary, args, { cwd: tmpdir(), stdio: ['pipe', 'pipe', 'pipe'] });
+        const child = spawn(binary, args, { cwd: workDir, stdio: ['pipe', 'pipe', 'pipe'] });
         let stdout = '';
         let stderr = '';
         const timer = setTimeout(() => {
@@ -88,7 +94,7 @@ export function createClaudeCliProvider({
           reject(
             new HCLlmError(
               error.code === 'ENOENT'
-                ? `Claude CLI не найден (${binary}). Укажите путь в CLAUDE_CLI_PATH.`
+                ? `Claude CLI не найден (${binary}, папка ${workDir}). Укажите путь в CLAUDE_CLI_PATH.`
                 : `Не удалось запустить Claude CLI: ${error.message}`,
             ),
           );
