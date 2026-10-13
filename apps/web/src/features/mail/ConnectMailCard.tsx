@@ -12,9 +12,10 @@ import {
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonBase from '@mui/material/ButtonBase';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { useMutation } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { hcApi } from '../../api/hcApi';
 import { ServerError } from '../../components/ServerError';
@@ -80,7 +81,7 @@ function ProviderPicker({
               justifyContent: 'flex-start',
               gap: 1.5,
               p: 1.5,
-              borderRadius: 4,
+              borderRadius: 3,
               border: '2px solid',
               borderColor: selected ? hcColors.primary : hcColors.outlineVariant,
               bgcolor: selected ? hcColors.heroContainer : 'transparent',
@@ -102,7 +103,7 @@ interface ConnectMailCardProps {
   onCancel?: () => void;
 }
 
-/** Подключение ящика в три шага: сервис → пароль приложения → адрес и пароль (ТЗ, экран 3). */
+/** Подключение ящика в три шага: сервис → инструкция → пароль приложения (ТЗ, экран 3). */
 export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps) {
   const { data: user } = useCurrentUser();
   // Чаще всего чеки приходят на тот же адрес, с которым человек зарегистрировался.
@@ -121,6 +122,8 @@ export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps)
   const providerKey = useWatch({ control: form.control, name: 'provider' });
   const provider = HC_MAIL_PROVIDERS[providerKey];
   const loginField = form.register('login');
+  // Адрес аккаунта уже известен — показываем его строкой, на виду остаётся одно поле.
+  const [editLogin, setEditLogin] = useState(userEmail === '');
 
   return (
     <Box
@@ -128,7 +131,7 @@ export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps)
       aria-labelledby="connect-mail-title"
       sx={{
         bgcolor: 'background.paper',
-        borderRadius: 7,
+        borderRadius: 4,
         p: { xs: 2.5, md: 4 },
         display: 'flex',
         flexDirection: 'column',
@@ -195,19 +198,28 @@ export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps)
             </Button>
           </Step>
 
-          <Step number={3} title="Вставьте адрес и пароль">
-            <EmailField
-              {...loginField}
-              onChange={(event) => {
-                void loginField.onChange(event);
-                // Ввели адрес на @ya.ru — сами переключаем сервис на Яндекс.
-                const detected = detectMailProvider(event.target.value);
-                if (detected) form.setValue('provider', detected);
-              }}
-              label="Адрес почты"
-              error={Boolean(errors.login)}
-              helperText={errors.login?.message}
-            />
+          <Step number={3} title="Вставьте пароль приложения">
+            {editLogin ? (
+              <EmailField
+                {...loginField}
+                onChange={(event) => {
+                  void loginField.onChange(event);
+                  // Ввели адрес на @ya.ru — сами переключаем сервис на Яндекс.
+                  const detected = detectMailProvider(event.target.value);
+                  if (detected) form.setValue('provider', detected);
+                }}
+                label="Адрес почты"
+                error={Boolean(errors.login)}
+                helperText={errors.login?.message}
+              />
+            ) : (
+              <Typography sx={{ fontSize: 15 }}>
+                Ящик <b>{userEmail}</b>{' '}
+                <Link component="button" type="button" onClick={() => setEditLogin(true)}>
+                  другой адрес
+                </Link>
+              </Typography>
+            )}
             <PasswordField
               {...form.register('appPassword')}
               label="Пароль приложения"
@@ -222,7 +234,7 @@ export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps)
                 display: 'flex',
                 gap: 1.5,
                 p: 1.5,
-                borderRadius: 4,
+                borderRadius: 3,
                 bgcolor: hcColors.surfaceContainer,
                 fontSize: 14,
                 color: 'text.secondary',
