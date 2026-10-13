@@ -18,7 +18,10 @@ import { parseRawEmail } from './receipts/parseRawEmail.js';
 
 const config = loadConfig();
 const db = createPrismaClient(config.DATABASE_URL);
-const llm = createClaudeCliProvider({ binary: config.CLAUDE_CLI_PATH, model: config.LLM_MODEL });
+// Модель — только для писем, которые не разобрал шаблон, и только если её включили.
+const llm = config.RECEIPT_PARSE_ENABLED
+  ? createClaudeCliProvider({ binary: config.CLAUDE_CLI_PATH, model: config.LLM_MODEL })
+  : null;
 
 // BullMQ требует maxRetriesPerRequest: null — иначе воркер падает при коротких обрывах связи с Redis.
 const connection = new Redis(config.REDIS_URL, { maxRetriesPerRequest: null });
@@ -65,9 +68,8 @@ const receiptParseWorker = new Worker<ReceiptParseJob>(
     const result = await parseRawEmail({ db, llm }, job.data.rawEmailId);
     await job.log(`Письмо ${job.data.rawEmailId}: ${result}`);
   },
-  // Каждый разбор — отдельный запрос к модели; больше двух сразу упирается в лимиты подписки.
-  // Выключенный разбор не берёт задачи вовсе: они копятся в очереди и не теряются.
-  { connection, concurrency: 2, autorun: config.RECEIPT_PARSE_ENABLED },
+  // Разбор моделью — отдельный запрос; больше двух сразу упирается в лимиты подписки.
+  { connection, concurrency: 2 },
 );
 
 mailSyncWorker.on('failed', (job, error) => {
@@ -88,8 +90,8 @@ receiptParseWorker.on('failed', async (job, error) => {
 console.log(
   `Воркеры запущены, Redis: ${config.REDIS_URL}, ` +
     (config.RECEIPT_PARSE_ENABLED
-      ? `разбор писем: ${llm.name}`
-      : 'разбор писем выключен (RECEIPT_PARSE_ENABLED=false)'),
+      ? `разбор писем: шаблоны, затем ${llm?.name}`
+      : 'разбор писем: только шаблоны (модель выключена, RECEIPT_PARSE_ENABLED=false)'),
 );
 
 async function shutdown() {
