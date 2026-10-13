@@ -8,13 +8,32 @@
 - `docs/design/` — копии макетов и таблица экранов. Живой холст: https://claude.ai/artifact/45EA5FnoULmEEaDVRaRxKK
 - `docs/brand/` — логотип: знак «хм» (х-ау + м-ач) в форме чека с зубчатым краем, надпись «хау» + «мач» (акцентным цветом).
 
+## Структура кода
+
+- `apps/web` — React + MUI. Экраны в `src/features/<раздел>/`, тема в `src/theme/hcTheme.ts`, клиент API в `src/api/hcApi.ts`.
+- `apps/api` — Fastify. `buildApp()` в `src/app.ts` (тесты через `app.inject`), маршруты в `src/routes/`, префикс `/api/v1`.
+- `apps/worker` — воркеры BullMQ.
+- `packages/shared` — общее для фронта и бэка: Zod-схемы ответов API, деньги (`formatRub`), категории, тарифы (`can()`), имена очередей. Экспортирует исходники TS напрямую.
+
+## Команды
+
+- `pnpm dev` — фронтенд (http://localhost:5173) + API (:3000); `pnpm dev:worker` — воркеры (нужен Redis).
+- `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format`.
+- `docker compose up -d` — PostgreSQL и Redis (Docker ещё не настроен: нужно включить WSL).
+
+## Соглашения
+
+- Префикс `HC` у глобальных сущностей: константы `HC_CATEGORIES`, `HC_QUEUES`, классы `HCApiError`, синглтоны и объекты `hcTheme`, `hcApi`, `hcColors`. Обычные компоненты, функции и локальные переменные — без префикса.
+- Комментарии и тексты интерфейса — на русском. Комментарий объясняет «почему», а не пересказывает код.
+- TypeScript 6 (не 7): typescript-eslint пока не поддерживает TS 7.
+
 ## Решения, которые уже приняты
 
-- Стек: React + Vite + TypeScript, Fastify, Prisma + PostgreSQL, Redis + BullMQ, pnpm workspaces, Docker Compose.
+- Стек: React + Vite + TypeScript + MUI (Material UI), Fastify, Prisma + PostgreSQL, Redis + BullMQ, pnpm workspaces, Docker Compose.
 - Источник чеков — только почта (IMAP с паролем приложения). Банковские API и «Мои чеки онлайн» не подходят: открытых API нет, привязать карту в «Моих чеках» нельзя.
 - LLM — готовые модели через интерфейс `LlmProvider` (Ollama для разработки, GigaChat/YandexGPT для продакшена). Своё обучение моделей не делаем.
 - Суммы в копейках (integer), время в UTC.
-- Дизайн: шрифт Onest, акцент `#0F6B4B`, фон `#F4F5F2`, цвета категорий фиксированы (см. `docs/TZ.md`, раздел 5).
+- Дизайн: Material 3 на MUI, шрифт Onest, primary `#006C4C`, фон `#F7FAF5`, цвета категорий фиксированы (см. `docs/TZ.md`, раздел 5). Эталон — `docs/design/DashboardM3.dc.html` и `Icons.dc.html`; остальные макеты в старом стиле, перерисовывать их не планируем — новые экраны делаем сразу в коде по эталону.
 
 ## Как работаем
 

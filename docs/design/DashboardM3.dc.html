@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Дашборд — Material</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F7FAF5}
+a{color:#006C4C}a:hover{color:#00513A}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 100vh; background: #F7FAF5; font-family: 'Onest', system-ui, sans-serif; color: #181D1A; font-variant-numeric: tabular-nums">
+
+<nav aria-label="Основное меню" style="flex: 1 1 240px; box-sizing: border-box; padding: 20px 12px; background: #EEF3EC; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 4px 16px 0">
+<svg width="34" height="34" viewBox="0 0 40 40" role="img" aria-label="Хау мач"><path d="M8 2H32A6 6 0 0 1 38 8V36L34.4 33L30.8 36L27.2 33L23.6 36L20 33L16.4 36L12.8 33L9.2 36L5.6 33L2 36V8A6 6 0 0 1 8 2Z" fill="#006C4C"></path><text x="20" y="24.5" text-anchor="middle" font-family="Onest, system-ui, sans-serif" font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">хм</text></svg>
+<span aria-hidden="true" style="font-size: 20px; font-weight: 700; letter-spacing: -0.03em"><span style="font-weight: 500">хау</span><span style="color: #006C4C">мач</span></span>
+</div>
+<button type="button" style="align-self: flex-start; margin-left: 4px; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 20px 0 16px; border: 0; border-radius: 16px; background: #B5F2D3; color: #002114; font: inherit; font-size: 15px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06); cursor: pointer">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+Добавить наличные</button>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<a href="DashboardM3.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; background: #CFE9DA; color: #0B1F16; text-decoration: none; font-weight: 600; font-size: 15px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="10" rx="2"></rect><rect x="13" y="3" width="8" height="6" rx="2"></rect><rect x="13" y="11" width="8" height="10" rx="2"></rect><rect x="3" y="15" width="8" height="6" rx="2"></rect></svg>
+Дашборд</a>
+<a href="Receipts.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; color: #404943; text-decoration: none; font-weight: 500; font-size: 15px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
+Чеки<span style="margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 10px; background: #B4541A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center">3</span></a>
+<a href="Inflation.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; color: #404943; text-decoration: none; font-weight: 500; font-size: 15px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
+Инфляция<span style="margin-left: auto; font-size: 11px; font-weight: 700; color: #6A3BB0; background: #EEE0FF; padding: 3px 8px; border-radius: 8px">PRO</span></a>
+<a href="#chat" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; color: #404943; text-decoration: none; font-weight: 500; font-size: 15px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path><path d="M8.5 9.5h7M8.5 12.5h4"></path></svg>
+Вопросы<span style="margin-left: auto; font-size: 11px; font-weight: 700; color: #6A3BB0; background: #EEE0FF; padding: 3px 8px; border-radius: 8px">PRO</span></a>
+<a href="Pricing.dc.html" style="display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 0 20px 0 16px; border-radius: 28px; color: #404943; text-decoration: none; font-weight: 500; font-size: 15px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"></path></svg>
+Настройки</a>
+</div>
+<div style="margin-top: auto; padding: 20px; border-radius: 24px; background: #FFDBC8; color: #3A1400; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="#B4541A" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>
+Pro · пробный период</div>
+<div style="font-size: 14px; line-height: 1.45">Осталось 11 дней, затем 249 ₽ в месяц.</div>
+<a href="Pricing.dc.html" style="align-self: flex-start; min-height: 40px; padding: 0 16px; border-radius: 20px; background: #FFFFFF; color: #7A2E00; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Оформить</a>
+</div>
+</nav>
+
+<main style="flex: 999 1 600px; min-width: 0; box-sizing: border-box; padding: 20px 32px 48px; display: flex; flex-direction: column; gap: 20px">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">Привет!</h1>
+<p style="margin: 0; font-size: 15px; color: #404943">Вот как идёт октябрь</p>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; flex: 0 1 520px; min-width: 260px">
+<label for="m3-search" style="flex: 1; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 20px; border-radius: 26px; background: #E5EAE3; color: #404943; cursor: text">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Поиск</span>
+<input id="m3-search" type="search" placeholder="Найти товар или магазин" style="flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 15px; color: #181D1A; outline-offset: 4px">
+</label>
+<button type="button" aria-label="Уведомления" style="width: 48px; height: 48px; border: 0; border-radius: 24px; background: transparent; color: #404943; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg>
+<span style="position: absolute; top: 10px; right: 11px; width: 8px; height: 8px; border-radius: 4px; background: #B4541A"></span>
+</button>
+<button type="button" aria-label="Профиль" style="width: 44px; height: 44px; border: 0; border-radius: 22px; background: #CFE9DA; color: #0B1F16; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8.5" r="4"></circle><path d="M4 20c1.2-4 4.3-6 8-6s6.8 2 8 6z"></path></svg>
+</button>
+</div>
+</header>
+
+<div role="group" aria-label="Период" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">
+<sc-if value="{{c.on}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></sc-if>
+{{c.label}}</button>
+</sc-for>
+</div>
+
+<section aria-labelledby="hero-total" style="background: #C4F1DA; border-radius: 28px; padding: 32px 36px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 12px; flex: 1 1 320px">
+<span style="font-size: 16px; color: #0B3B27; font-weight: 500">Потрачено с 1 октября</span>
+<span id="hero-total" style="font-size: 56px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: #002114">38&nbsp;420&nbsp;₽</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="display: flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 16px; background: #FFFFFF; color: #00513A; font-size: 14px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>
+6% к сентябрю</span>
+<span style="font-size: 15px; color: #0B3B27">на 2 450 ₽ меньше, чем 1–13 сентября</span>
+</div>
+</div>
+<svg width="300" height="212" viewBox="0 0 240 170" role="img" aria-label="Чек и стопка монет" style="flex: none; max-width: 100%; height: auto">
+<circle cx="132" cy="88" r="72" fill="#FFFFFF" fill-opacity="0.55"></circle>
+<path d="M30 156c0-24 11-40 31-44-2 20-13 36-31 44z" fill="#3FAE7C"></path>
+<path d="M30 156c-4-17-17-26-30-26 2 14 13 23 30 26z" fill="#7DD3A8"></path>
+<g transform="rotate(-8 124 86)">
+<path d="M86 22h76a8 8 0 0 1 8 8v110l-9.2-5-9.2 5-9.2-5-9.2 5-9.2-5-9.2 5-9.2-5-9.2 5-9.2-5-9.2 5V30a8 8 0 0 1 8-8z" fill="#FFFFFF" stroke="#16382A" stroke-width="2.5" stroke-linejoin="round"></path>
+<rect x="92" y="38" width="44" height="8" rx="4" fill="#16382A"></rect>
+<rect x="92" y="58" width="64" height="6" rx="3" fill="#C0C9C1"></rect>
+<rect x="92" y="72" width="52" height="6" rx="3" fill="#C0C9C1"></rect>
+<rect x="92" y="86" width="58" height="6" rx="3" fill="#C0C9C1"></rect>
+<rect x="92" y="108" width="30" height="8" rx="4" fill="#006C4C"></rect>
+<rect x="132" y="108" width="24" height="8" rx="4" fill="#006C4C"></rect>
+</g>
+<path d="M174 142v6a22 8 0 0 0 44 0v-6" fill="#E3A92B" stroke="#7A5A0C" stroke-width="2"></path>
+<ellipse cx="196" cy="142" rx="22" ry="8" fill="#F6C94F" stroke="#7A5A0C" stroke-width="2"></ellipse>
+<path d="M174 132v6a22 8 0 0 0 44 0v-6" fill="#E3A92B" stroke="#7A5A0C" stroke-width="2"></path>
+<ellipse cx="196" cy="132" rx="22" ry="8" fill="#F6C94F" stroke="#7A5A0C" stroke-width="2"></ellipse>
+<path d="M174 122v6a22 8 0 0 0 44 0v-6" fill="#E3A92B" stroke="#7A5A0C" stroke-width="2"></path>
+<ellipse cx="196" cy="122" rx="22" ry="8" fill="#F6C94F" stroke="#7A5A0C" stroke-width="2"></ellipse>
+<text x="196" y="126" text-anchor="middle" font-family="Onest, sans-serif" font-size="11" font-weight="700" fill="#7A5A0C">₽</text>
+<path d="M210 30l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#F08A4B"></path>
+<path d="M46 40l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#8A56D6"></path>
+</svg>
+</section>
+
+<section aria-label="Показатели" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+<a href="Receipts.dc.html" style="background: #FFFFFF; border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 16px; text-decoration: none; color: #181D1A">
+<span style="width: 56px; height: 56px; border-radius: 28px; background: #DCE6FF; color: #1F4FA8; display: flex; align-items: center; justify-content: center; flex: none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; color: #404943">Чеков</span><span style="font-size: 26px; font-weight: 700">47</span><span style="font-size: 13px; color: #8F3A0C; font-weight: 600">3 ждут проверки →</span></span>
+</a>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 16px">
+<span style="width: 56px; height: 56px; border-radius: 28px; background: #FBEFC4; color: #7D5F00; display: flex; align-items: center; justify-content: center; flex: none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6.5" rx="7" ry="3"></ellipse><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"></path><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; color: #404943">Средний чек</span><span style="font-size: 26px; font-weight: 700">817&nbsp;₽</span><span style="font-size: 13px; color: #404943">в сентябре 862 ₽</span></span>
+</div>
+<a href="Inflation.dc.html" style="background: #FFDBC8; border-radius: 24px; padding: 20px; display: flex; align-items: center; gap: 16px; text-decoration: none; color: #3A1400">
+<span style="width: 56px; height: 56px; border-radius: 28px; background: #FFFFFF; color: #B4541A; display: flex; align-items: center; justify-content: center; flex: none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px">Личная инфляция с мая</span><span style="font-size: 26px; font-weight: 700; color: #8F3A0C">+4,8%</span><span style="font-size: 13px">официальная +2,9% →</span></span>
+</a>
+</section>
+
+<section aria-labelledby="cats" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 id="cats" style="margin: 0; font-size: 20px; font-weight: 700">Куда ушли деньги</h2>
+<span style="font-size: 12px; font-weight: 600; color: #404943; border: 1px solid #C0C9C1; border-radius: 8px; padding: 3px 8px">по товарам</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #DCE6FF; color: #1F4FA8; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10h15l-1.6 8.6a2 2 0 0 1-2 1.4H8.1a2 2 0 0 1-2-1.4z"></path><path d="M8 10l4-6 4 6"></path><path d="M10 14v3M14 14v3"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">44%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Продукты</span><span style="font-size: 22px; font-weight: 700">16&nbsp;940&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #EEF1F6"><div style="width: 44%; height: 8px; border-radius: 4px; background: #2E6BD8"></div></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FFE2CC; color: #A6501A; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"></path><path d="M3 7.5l9 4.5 9-4.5M12 12v9"></path><path d="M7.5 5.2l9 4.6"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">21%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Маркетплейсы</span><span style="font-size: 22px; font-weight: 700">8&nbsp;210&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #F6EEE8"><div style="width: 21%; height: 8px; border-radius: 4px; background: #E0782F"></div></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #EEE0FF; color: #6A3BB0; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"></path><path d="M8 3c-.8 1 .8 2 0 3M12 3c-.8 1 .8 2 0 3"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">13%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Кафе и кофе</span><span style="font-size: 22px; font-weight: 700">4&nbsp;870&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #F2EEF8"><div style="width: 13%; height: 8px; border-radius: 4px; background: #8A56D6"></div></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #CCF2EC; color: #0B6B5E; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.5-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.5 12 20 12 20z"></path><path d="M7.5 12.5h2.8l1.4-2.5 2 4.2 1.3-1.7h1.5"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">11%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Здоровье</span><span style="font-size: 22px; font-weight: 700">4&nbsp;300&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #E9F4F2"><div style="width: 11%; height: 8px; border-radius: 4px; background: #12907F"></div></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #FBEFC4; color: #7D5F00; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">7%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Дом и химия</span><span style="font-size: 22px; font-weight: 700">2&nbsp;650&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #F7F2E2"><div style="width: 7%; height: 8px; border-radius: 4px; background: #B8901A"></div></div>
+</div>
+<div style="background: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between"><span style="width: 44px; height: 44px; border-radius: 22px; background: #E6E8EB; color: #4B5563; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path><path d="M18.5 16.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"></path></svg></span><span style="font-size: 14px; font-weight: 600; color: #404943">4%</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #404943">Другое</span><span style="font-size: 22px; font-weight: 700">1&nbsp;450&nbsp;₽</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #F1F2F4"><div style="width: 4%; height: 8px; border-radius: 4px; background: #9AA0A8"></div></div>
+</div>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<section aria-labelledby="days" style="flex: 2 1 460px; min-width: 0; background: #FFFFFF; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 id="days" style="margin: 0; font-size: 20px; font-weight: 700">Траты по дням</h2>
+<div role="img" aria-label="Траты с 1 по 13 октября, больше всего 11 октября — 6 150 рублей" style="display: flex; align-items: flex-end; gap: 6px; height: 232px; padding-top: 8px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="13">
+<div style="flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px">
+<sc-if value="{{b.peak}}" hint-placeholder-val="{{ false }}"><span style="white-space: nowrap; font-size: 13px; font-weight: 700; color: #FFFFFF; background: #181D1A; padding: 4px 8px; border-radius: 8px">6 150 ₽</span></sc-if>
+<div style="width: 100%; max-width: 28px; height: {{b.h}}px; background: {{b.color}}; border-radius: 14px"></div>
+<span style="font-size: 12px; color: #404943; height: 16px">{{b.label}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section aria-labelledby="tip" style="flex: 1 1 300px; min-width: 0; background: #EEE0FF; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 12px; color: #2E1A52">
+<div style="display: flex; align-items: center; gap: 8px">
+<h2 id="tip" style="margin: 0; font-size: 20px; font-weight: 700">Хм, кофе</h2>
+<span style="font-size: 11px; font-weight: 700; color: #6A3BB0; background: #FFFFFF; padding: 3px 8px; border-radius: 8px">PRO</span>
+</div>
+<svg width="150" height="128" viewBox="0 0 200 170" role="img" aria-label="Чашка кофе" style="align-self: center">
+<circle cx="100" cy="92" r="70" fill="#FFFFFF" fill-opacity="0.6"></circle>
+<path d="M76 42c-5 6 5 9 0 15M100 36c-5 6 5 9 0 15M124 42c-5 6 5 9 0 15" fill="none" stroke="#8A56D6" stroke-width="3" stroke-linecap="round"></path>
+<path d="M58 70h84v30a34 34 0 0 1-34 34H92a34 34 0 0 1-34-34z" fill="#FFFFFF" stroke="#2E1A52" stroke-width="2.5" stroke-linejoin="round"></path>
+<path d="M142 80h8a14 14 0 0 1 0 28h-10" fill="none" stroke="#2E1A52" stroke-width="2.5"></path>
+<path d="M66 70c10 8 58 8 68 0" fill="#B8865A"></path>
+<rect x="46" y="138" width="108" height="9" rx="4.5" fill="#2E1A52"></rect>
+<path d="M164 46l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#F08A4B"></path>
+</svg>
+<p style="margin: 0; font-size: 16px; line-height: 1.45"><b>2 100 ₽</b> на капучино за 13 дней — это 7 чашек в кофейне на Лесной.</p>
+<button type="button" style="align-self: flex-start; min-height: 40px; padding: 0 20px; border: 0; border-radius: 20px; background: #6A3BB0; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Поставить бюджет</button>
+</section>
+</div>
+
+<section aria-labelledby="recent-m3" style="background: #FFFFFF; border-radius: 28px; padding: 24px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px">
+<h2 id="recent-m3" style="margin: 0; font-size: 20px; font-weight: 700">Последние покупки</h2>
+<a href="Receipts.dc.html" style="min-height: 40px; padding: 0 16px; border-radius: 20px; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center">Все чеки</a>
+</div>
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 12px; border-radius: 20px; text-decoration: none; color: #181D1A">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #DCE6FF; color: #1F4FA8; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10h15l-1.6 8.6a2 2 0 0 1-2 1.4H8.1a2 2 0 0 1-2-1.4z"></path><path d="M8 10l4-6 4 6"></path><path d="M10 14v3M14 14v3"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Пятёрочка</span><span style="font-size: 14px; color: #404943">Сегодня, 14:02 · 12 позиций · молоко, сыр, курица…</span></span>
+<span style="font-size: 17px; font-weight: 700">1&nbsp;870&nbsp;₽</span>
+</a>
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 12px; border-radius: 20px; text-decoration: none; color: #181D1A">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #EEE0FF; color: #6A3BB0; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"></path><path d="M8 3c-.8 1 .8 2 0 3M12 3c-.8 1 .8 2 0 3"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Кофейня на Лесной</span><span style="font-size: 14px; color: #404943">Сегодня, 09:41 · капучино, круассан</span></span>
+<span style="font-size: 17px; font-weight: 700">380&nbsp;₽</span>
+</a>
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 12px; border-radius: 20px; text-decoration: none; color: #181D1A">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #E2F3E8; color: #006C4C; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><circle cx="12" cy="12" r="2.8"></circle><path d="M6 12h.01M18 12h.01"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Рынок</span><span style="font-size: 14px; color: #404943">Сегодня · наличные, добавлено вручную</span></span>
+<span style="font-size: 17px; font-weight: 700">1&nbsp;080&nbsp;₽</span>
+</a>
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 12px; border-radius: 20px; text-decoration: none; color: #181D1A">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #DCE6FF; color: #1F4FA8; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10h15l-1.6 8.6a2 2 0 0 1-2 1.4H8.1a2 2 0 0 1-2-1.4z"></path><path d="M8 10l4-6 4 6"></path><path d="M10 14v3M14 14v3"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">ВкусВилл</span><span style="font-size: 14px; color: #404943">Вчера, 19:15 · 9 позиций · овощи, йогурты…</span></span>
+<span style="font-size: 17px; font-weight: 700">2&nbsp;830&nbsp;₽</span>
+</a>
+<a href="Receipt.dc.html" style="display: flex; align-items: center; gap: 16px; min-height: 72px; padding: 0 12px; border-radius: 20px; text-decoration: none; color: #181D1A">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: #FFE2CC; color: #A6501A; display: flex; align-items: center; justify-content: center; flex: none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"></path><path d="M3 7.5l9 4.5 9-4.5M12 12v9"></path><path d="M7.5 5.2l9 4.6"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Ozon</span><span style="font-size: 14px; color: #404943">11 октября · 3 позиции · кофе в зёрнах, губки…</span></span>
+<span style="font-size: 17px; font-weight: 700">4&nbsp;990&nbsp;₽</span>
+</a>
+</section>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1420}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { period: 'month' };
+  }
+  renderVals() {
+    const days = [2100, 3450, 1200, 5600, 980, 4300, 2750, 1890, 3200, 640, 6150, 2830, 3330];
+    const max = 6150;
+    const bars = days.map((v, i) => ({
+      label: String(i + 1),
+      h: Math.max(10, Math.round(v / max * 160)),
+      peak: v === max,
+      color: v === max ? '#F08A4B' : (i === days.length - 1 ? '#006C4C' : '#9ED9BC')
+    }));
+    const chips = [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц'], ['custom', 'Свой период']].map(([id, label]) => {
+      const on = this.state.period === id;
+      return {
+        label, on, pressed: on ? 'true' : 'false',
+        pick: () => this.setState({ period: id }),
+        style: 'display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 16px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; ' +
+          (on ? 'background: #CFE9DA; color: #0B1F16; border: 1px solid #CFE9DA; padding-left: 10px' : 'background: transparent; color: #404943; border: 1px solid #C0C9C1')
+      };
+    });
+    return { bars, chips };
+  }
+}
+</script>
+</body>
+</html>

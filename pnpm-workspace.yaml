@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Пакеты, которым разрешено запускать установочные скрипты. Остальным pnpm запрещает.
+allowBuilds:
+  esbuild: true
