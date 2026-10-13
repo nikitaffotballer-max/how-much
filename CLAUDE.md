@@ -15,6 +15,7 @@
 - `apps/worker` — воркеры BullMQ.
 - `packages/db` — схема Prisma (`prisma/schema.prisma`), миграции, клиент `createPrismaClient()`, сид категорий. Клиент генерируется в `generated/` (не в git).
 - `packages/mail` — работа с почтой на сервере: IMAP только на чтение, белый список отправителей чеков, шифрование паролей приложений (AES-256-GCM).
+- `packages/llm` — интерфейс `LlmProvider` и провайдер Claude через Claude Code CLI (по подписке, без API-ключа).
 - `packages/shared` — общее для фронта и бэка: Zod-схемы ответов API, деньги (`formatRub`), категории, тарифы (`can()`), имена очередей. Экспортирует исходники TS напрямую.
 
 ## Команды
@@ -36,10 +37,12 @@
 
 - Стек: React + Vite + TypeScript + MUI (Material UI), Fastify, Prisma + PostgreSQL, Redis + BullMQ, pnpm workspaces, Docker Compose.
 - Источник чеков — только почта (IMAP с паролем приложения). Банковские API и «Мои чеки онлайн» не подходят: открытых API нет, привязать карту в «Моих чеках» нельзя.
-- LLM — готовые модели через интерфейс `LlmProvider` (Ollama для разработки, GigaChat/YandexGPT для продакшена). Своё обучение моделей не делаем.
+- LLM — готовые модели через интерфейс `LlmProvider`: для разработки Claude через Claude Code CLI по подписке автора, для продакшена — провайдер с API-ключом (GigaChat/YandexGPT/Claude API). Своё обучение моделей не делаем.
+- Чеки из писем разбирает LLM; ответ проверяется арифметикой (сумма позиций = итог), иначе письмо уходит в «Требуют внимания».
 - Суммы в копейках (integer), время в UTC.
 - В интерфейсе только настоящие данные и работающие кнопки: никаких демо-данных и заглушек. Раздела нет в меню, пока нет его экрана.
 - Ключ `MAIL_ENCRYPTION_KEY` (32 байта в base64) — только в `.env`, в git не попадает.
+- Windows: приложение Claude — MSIX-пакет, его `claude.exe` для обычных процессов лежит в `%LOCALAPPDATA%PackagesClaude_*LocalCacheRoamingClaudeclaude-code<версия>...`; путь пишем в `CLAUDE_CLI_PATH` и обновляем после обновления приложения. Проверка: `pnpm --filter @how-much/worker try:parse <письмо.html>`.
 - Дизайн: Material 3 на MUI, шрифт Onest, primary `#006C4C`, фон `#F7FAF5`, цвета категорий фиксированы (см. `docs/TZ.md`, раздел 5). Эталон — `docs/design/DashboardM3.dc.html` и `Icons.dc.html`; остальные макеты в старом стиле, перерисовывать их не планируем — новые экраны делаем сразу в коде по эталону.
 
 ## Как работаем
