@@ -11,6 +11,7 @@ import {
   mailAccountListSchema,
   mailAccountSchema,
   type ConnectMailAccount,
+  type CreateCashReceipt,
   type Credentials,
   type LoginCredentials,
   type CurrentUser,
@@ -100,6 +101,9 @@ export const hcApi = {
   },
   getReceipt: (id: string) => request(`/receipts/${id}`, receiptDetailSchema),
   getCategories: () => request('/categories', categoryListSchema),
+  createCashReceipt: (body: CreateCashReceipt) =>
+    request('/receipts', receiptDetailSchema, { method: 'POST', body }),
+  deleteReceipt: (id: string) => request(`/receipts/${id}`, noContent, { method: 'DELETE' }),
   updateReceiptItem: ({ id, categoryKey }: { id: string; categoryKey: string }) =>
     request(`/receipt-items/${id}`, receiptItemSchema, { method: 'PATCH', body: { categoryKey } }),
   getAttentionEmails: () => request('/receipts/attention', attentionEmailListSchema),

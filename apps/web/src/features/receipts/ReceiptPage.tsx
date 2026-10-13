@@ -1,4 +1,5 @@
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
+import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import CheckRounded from '@mui/icons-material/CheckRounded';
 import ExpandMoreRounded from '@mui/icons-material/ExpandMoreRounded';
 import {
@@ -13,18 +14,25 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListSubheader from '@mui/material/ListSubheader';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Skeleton from '@mui/material/Skeleton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { hcApi } from '../../api/hcApi';
 import { CategoryIcon } from '../../components/CategoryIcon';
+import { ServerError } from '../../components/ServerError';
 import { UserMenu } from '../../layout/UserMenu';
 import { formatDateTime } from '../../lib/dates';
 import { hcColors } from '../../theme/hcTheme';
@@ -215,6 +223,16 @@ export function ReceiptPage() {
     queryKey: ['receipts', 'detail', id],
     queryFn: () => hcApi.getReceipt(id),
   });
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const remove = useMutation({
+    mutationFn: hcApi.deleteReceipt,
+    onSuccess: async () => {
+      navigate('/receipts', { replace: true });
+      await queryClient.invalidateQueries();
+    },
+  });
 
   return (
     <>
@@ -223,6 +241,13 @@ export function ReceiptPage() {
           <ArrowBackRounded />
         </IconButton>
         <Typography sx={{ flex: 1, fontWeight: 600 }}>Чек</Typography>
+        {receipt.data && (
+          <Tooltip title="Удалить чек">
+            <IconButton aria-label="Удалить чек" onClick={() => setConfirmOpen(true)}>
+              <DeleteOutlineRounded />
+            </IconButton>
+          </Tooltip>
+        )}
         <UserMenu />
       </Box>
 
@@ -261,6 +286,31 @@ export function ReceiptPage() {
           )}
         </>
       )}
+
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        slotProps={{ paper: { sx: { borderRadius: 4 } } }}
+      >
+        <DialogTitle>Удалить чек?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Покупки из него пропадут из статистики. Письмо из почты заново не загрузится.
+          </DialogContentText>
+          <ServerError error={remove.error} />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={() => setConfirmOpen(false)}>Отмена</Button>
+          <Button
+            variant="contained"
+            color="error"
+            loading={remove.isPending}
+            onClick={() => remove.mutate(id)}
+          >
+            Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

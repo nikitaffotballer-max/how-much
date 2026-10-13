@@ -1,14 +1,18 @@
+import AddRounded from '@mui/icons-material/AddRounded';
 import AutoAwesomeRounded from '@mui/icons-material/AutoAwesomeRounded';
 import DashboardRounded from '@mui/icons-material/DashboardRounded';
 import ReceiptLongRounded from '@mui/icons-material/ReceiptLongRounded';
 import SettingsRounded from '@mui/icons-material/SettingsRounded';
 import type { SvgIconComponent } from '@mui/icons-material';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
 import { plural } from '@how-much/shared';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router';
 import { HCLogo } from '../components/HCLogo';
 import { daysLeft, useCurrentUser } from '../features/auth/useCurrentUser';
+import { AddCashDialog } from '../features/cash/AddCashDialog';
 import { hcColors } from '../theme/hcTheme';
 
 interface NavItem {
@@ -135,6 +139,9 @@ function ProTrialCard() {
  * на телефоне — нижняя панель, чтобы меню не занимало первый экран.
  */
 export function AppShell({ children }: { children: ReactNode }) {
+  const [cashOpen, setCashOpen] = useState(false);
+  const openCash = () => setCashOpen(true);
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Box
@@ -154,6 +161,20 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Box sx={{ px: 2, pt: 0.5, pb: 1 }}>
           <HCLogo />
         </Box>
+        <Button
+          startIcon={<AddRounded />}
+          onClick={openCash}
+          sx={{
+            alignSelf: 'flex-start',
+            ml: 0.5,
+            minHeight: 48,
+            bgcolor: hcColors.primaryContainer,
+            color: hcColors.onPrimaryContainer,
+            '&:hover': { bgcolor: '#A3E8C5' },
+          }}
+        >
+          Добавить наличные
+        </Button>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
           {NAV_ITEMS.map((item) => (
             <DrawerLink key={item.to} item={item} />
@@ -196,6 +217,30 @@ export function AppShell({ children }: { children: ReactNode }) {
           <BarLink key={item.to} item={item} />
         ))}
       </Box>
+      <Fab
+        variant="extended"
+        onClick={openCash}
+        aria-label="Добавить наличные"
+        sx={{
+          display: { xs: 'inline-flex', md: 'none' },
+          position: 'fixed',
+          right: 16,
+          // Над нижней панелью навигации.
+          bottom: 'calc(96px + env(safe-area-inset-bottom))',
+          borderRadius: 4,
+          textTransform: 'none',
+          fontWeight: 600,
+          bgcolor: hcColors.primaryContainer,
+          color: hcColors.onPrimaryContainer,
+          '&:hover': { bgcolor: '#A3E8C5' },
+        }}
+      >
+        <AddRounded sx={{ mr: 0.5 }} />
+        Наличные
+      </Fab>
+
+      {/* Монтируем только открытым: каждый раз форма начинается с чистого листа. */}
+      {cashOpen && <AddCashDialog open onClose={() => setCashOpen(false)} />}
     </Box>
   );
 }
