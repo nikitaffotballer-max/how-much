@@ -22,6 +22,11 @@ describe('can', () => {
     expect(can({ subscriptionStatus: null }, 'personalInflation')).toBe(false);
   });
 
+  it('периоды дашборда — только в Pro', () => {
+    expect(can({ subscriptionStatus: 'expired' }, 'dashboardPeriods')).toBe(false);
+    expect(can({ subscriptionStatus: 'active' }, 'dashboardPeriods')).toBe(true);
+  });
+
   it('Pro-функция доступна в пробный период', () => {
     expect(can({ subscriptionStatus: 'trialing' }, 'personalInflation')).toBe(true);
   });

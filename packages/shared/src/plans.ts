@@ -7,6 +7,7 @@ export type Plan = 'free' | 'pro';
 export type SubscriptionStatus = 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired';
 
 export type Feature =
+  | 'dashboardPeriods'
   | 'itemCategories'
   | 'personalInflation'
   | 'askQuestions'
@@ -25,6 +26,7 @@ export interface PlanLimits {
 }
 
 const PRO_FEATURES: ReadonlySet<Feature> = new Set<Feature>([
+  'dashboardPeriods',
   'itemCategories',
   'personalInflation',
   'askQuestions',
@@ -66,6 +68,18 @@ export function effectivePlan(subject: AccessSubject): Plan {
 export function can(subject: AccessSubject, feature: Feature): boolean {
   return HC_PLAN_LIMITS[effectivePlan(subject)].features.has(feature);
 }
+
+/** Как назвать функцию в предложении перейти на Pro: «… доступны в Pro». */
+export const HC_FEATURE_NAMES: Record<Feature, string> = {
+  dashboardPeriods: 'Любые периоды на дашборде',
+  itemCategories: 'Категории по товарам',
+  personalInflation: 'Личная инфляция',
+  askQuestions: 'Вопросы обычным языком',
+  budgets: 'Бюджеты',
+  bankStatements: 'Импорт банковских выписок',
+  export: 'Экспорт',
+  monthlyReport: 'Отчёт за месяц',
+};
 
 /** Пробный Pro при регистрации (ТЗ, раздел 4). */
 export const HC_TRIAL_DAYS = 14;

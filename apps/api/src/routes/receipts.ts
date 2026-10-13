@@ -12,6 +12,7 @@ import {
 } from '@how-much/shared';
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
+import { historyStart } from '../auth/access.js';
 import { requireUserId } from '../auth/requestUser.js';
 import { HCHttpError } from '../errors.js';
 import type { MailGateway } from '../mail/mailGateway.js';
@@ -86,6 +87,8 @@ export const receiptRoutes =
       const { q, category, cursor, limit } = receiptListQuerySchema.parse(request.query);
 
       const filters: Prisma.ReceiptWhereInput[] = [{ userId }];
+      const since = await historyStart(app.db, userId);
+      if (since) filters.push({ purchasedAt: { gte: since } });
       if (q) {
         filters.push({
           OR: [

@@ -8,6 +8,7 @@ export class HCHttpError extends Error {
     readonly statusCode: number,
     readonly code: string,
     message: string,
+    readonly details?: unknown,
   ) {
     super(message);
     this.name = 'HCHttpError';
@@ -29,7 +30,8 @@ export function registerErrorHandler(app: FastifyInstance) {
     }
 
     if (error instanceof HCHttpError) {
-      return reply.status(error.statusCode).send({ code: error.code, message: error.message });
+      const body: ApiError = { code: error.code, message: error.message, details: error.details };
+      return reply.status(error.statusCode).send(body);
     }
 
     // Ошибки самого Fastify (429 от rate limit, 415 и т. п.) пропускаем со своим статусом.
