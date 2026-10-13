@@ -43,6 +43,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:deploy
+      # Справочник категорий нужен тестам аналитики и разбора чеков.
+      - run: pnpm db:seed
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
