@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "try:parse": "tsx --env-file-if-exists=../../.env src/scripts/tryParse.ts",
-    "mail:survey": "tsx --env-file-if-exists=../../.env src/scripts/surveyMail.ts"
+    "mail:survey": "tsx --env-file-if-exists=../../.env src/scripts/surveyMail.ts",
+    "receipts:dry-run": "tsx --env-file-if-exists=../../.env src/scripts/templateDryRun.ts"
   },
   "dependencies": {
     "@how-much/db": "workspace:*",

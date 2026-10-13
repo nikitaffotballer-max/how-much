@@ -19,9 +19,20 @@ export interface CheckedReceipt {
     quantity: number;
     priceKopecks: number;
     sumKopecks: number;
-    categoryKey: string;
+    /** null — категорию не знаем: шаблонный разбор её не определяет. */
+    categoryKey: string | null;
   }[];
 }
+
+type ExtractedItem = ExtractedReceipt['items'][number];
+
+/**
+ * Черновик чека — от модели или от шаблонного разбора. Шаблон не знает категорий,
+ * поэтому у позиций она может быть пустой.
+ */
+export type ReceiptDraft = Omit<ExtractedReceipt, 'isReceipt' | 'items'> & {
+  items: (Omit<ExtractedItem, 'category'> & { category: string | null })[];
+};
 
 export type CheckResult = { ok: true; receipt: CheckedReceipt } | { ok: false; reason: string };
 
@@ -29,10 +40,10 @@ const toKopecks = (rubles: number) => Math.round(rubles * 100);
 const digitsOrNull = (value: string | null) => value?.replace(/\D/g, '') || null;
 
 /**
- * Модель может ошибиться, поэтому её ответ проверяем арифметикой (ТЗ, 3.3):
+ * Модель и шаблон могут ошибиться, поэтому черновик проверяем арифметикой (ТЗ, 3.3):
  * сумма позиций должна сходиться с итогом. Не сошлось — письмо уйдёт в «Требуют внимания».
  */
-export function checkReceipt(extracted: ExtractedReceipt): CheckResult {
+export function checkReceipt(extracted: ReceiptDraft): CheckResult {
   if (extracted.total === null || extracted.items.length === 0) {
     return { ok: false, reason: 'В письме не нашлось итога или списка покупок' };
   }

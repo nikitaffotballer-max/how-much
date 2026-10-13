@@ -31,7 +31,7 @@ function fakeLlm(answer: ExtractedReceipt) {
   return { llm, requests };
 }
 
-async function createRawEmail(userId?: string) {
+async function createRawEmail(userId?: string, emailHtml = html, subject = 'Кассовый чек') {
   const user = userId
     ? { id: userId }
     : await db.user.create({
@@ -47,9 +47,9 @@ async function createRawEmail(userId?: string) {
       mailAccountId: account.id,
       messageId: `<${randomUUID()}@ofd.ru>`,
       fromAddress: 'noreply@ofd.ru',
-      subject: 'Кассовый чек',
+      subject,
       receivedAt: new Date(),
-      html,
+      html: emailHtml,
       deleteAfter: new Date(Date.now() + 86_400_000),
     },
   });
@@ -132,5 +132,55 @@ describe('parseRawEmail', () => {
 
     expect(await parseRawEmail({ db, llm }, raw.id)).toBe('skipped');
     expect(requests).toHaveLength(1);
+  });
+
+  it('письмо-ссылку без чека отсеивает без модели', async () => {
+    const raw = await createRawEmail(
+      undefined,
+      '<p>Ваш электронный чек. <a href="#">Скачать чек</a></p>',
+    );
+
+    expect(await parseRawEmail({ db, llm: null }, raw.id)).toBe('ignored');
+    expect(await db.rawEmail.findUniqueOrThrow({ where: { id: raw.id } })).toMatchObject({
+      parseStatus: 'ignored',
+      parseError: expect.stringContaining('только ссылка'),
+    });
+  });
+
+  it('знакомый формат разбирает шаблоном, не обращаясь к модели', async () => {
+    const template = [
+      '<pre>ООО "ЗЕЛЁНАЯ ЛАВКА"',
+      'ИНН 7700000099',
+      'Приход   13.10.2026 16:31',
+      'Кефир 2,5%',
+      '1 x 89.90   89.90',
+      'ИТОГ   = 89.90',
+      'БЕЗНАЛИЧНЫМИ   89.90',
+      `ФН 73800000${String(Date.now()).slice(-8)}   ФД 1   ФП 123456</pre>`,
+    ].join('\n');
+    const raw = await createRawEmail(undefined, template);
+    const { llm, requests } = fakeLlm(EXTRACTED_RECEIPT);
+
+    expect(await parseRawEmail({ db, llm }, raw.id)).toBe('parsed');
+    expect(requests).toHaveLength(0);
+    const receipt = await db.receipt.findFirstOrThrow({
+      where: { rawEmailId: raw.id },
+      include: { items: true, merchant: true },
+    });
+    expect(receipt.merchant?.displayName).toBe('Зелёная лавка');
+    expect(receipt.items).toMatchObject([
+      { rawName: 'Кефир 2,5%', sumKopecks: 8_990, categoryId: null, categorySource: null },
+    ]);
+    await db.receipt.delete({ where: { id: receipt.id } });
+    await db.merchant.delete({ where: { inn: '7700000099' } });
+  });
+
+  it('незнакомый формат при выключенной модели оставляет в очереди', async () => {
+    const raw = await createRawEmail();
+
+    expect(await parseRawEmail({ db, llm: null }, raw.id)).toBe('deferred');
+    expect(await db.rawEmail.findUniqueOrThrow({ where: { id: raw.id } })).toMatchObject({
+      parseStatus: 'pending',
+    });
   });
 });
