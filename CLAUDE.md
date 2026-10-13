@@ -20,7 +20,7 @@
 
 - `pnpm dev` — фронтенд (http://localhost:5173) + API (:3000); `pnpm dev:worker` — воркеры (нужен Redis).
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format`.
-- `docker compose up -d` — PostgreSQL и Redis. `pnpm db:migrate` — новая миграция (после правки схемы), `pnpm db:seed` — справочник категорий, `pnpm db:studio` — просмотр базы.
+- `docker compose up -d` — PostgreSQL и Redis. `pnpm db:migrate` — новая миграция (после правки схемы), `pnpm db:seed` — справочник категорий, `pnpm db:studio` — просмотр базы, `pnpm db:seed:demo` — демо-аккаунт с покупками за два месяца (вход кнопкой «Посмотреть демо»).
 
 ## Соглашения
 

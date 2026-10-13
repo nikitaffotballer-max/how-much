@@ -81,6 +81,18 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
     return toCurrentUser(user);
   });
 
+  /** Вход в демо-аккаунт без пароля — чтобы посмотреть сервис, не подключая почту. */
+  app.post('/auth/demo', { config: authRateLimit }, async (request, reply) => {
+    const demoEmail = app.hcConfig.DEMO_EMAIL;
+    const user = demoEmail ? await findUserByEmail(app.db, demoEmail) : null;
+    if (!user) {
+      throw new HCHttpError(404, 'demo_unavailable', 'Демо-аккаунт сейчас недоступен');
+    }
+
+    await startSession(reply, user.id, request.headers['user-agent']);
+    return toCurrentUser(user);
+  });
+
   app.post('/auth/logout', async (request, reply) => {
     const token = request.cookies[SESSION_COOKIE];
     if (token) await deleteSession(app.db, token);

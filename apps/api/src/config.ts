@@ -7,6 +7,8 @@ const envSchema = z.object({
   API_HOST: z.string().default('127.0.0.1'),
   WEB_ORIGIN: z.url().default('http://localhost:5173'),
   DATABASE_URL: z.string().min(1, { error: 'DATABASE_URL обязателен' }),
+  /** Email демо-аккаунта. Не задан — кнопка «Посмотреть демо» отключена. */
+  DEMO_EMAIL: z.email().optional(),
 });
 
 export type Config = z.infer<typeof envSchema>;

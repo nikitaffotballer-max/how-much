@@ -8,9 +8,11 @@ import TrendingUpRounded from '@mui/icons-material/TrendingUpRounded';
 import type { SvgIconComponent } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { plural } from '@how-much/shared';
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router';
 import { HCLogo } from '../components/HCLogo';
+import { daysLeft, useCurrentUser } from '../features/auth/useCurrentUser';
 import { hcColors } from '../theme/hcTheme';
 
 interface NavItem {
@@ -23,7 +25,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Дашборд', icon: DashboardRounded },
-  { to: '/receipts', label: 'Чеки', icon: ReceiptLongRounded, badge: '3' },
+  { to: '/receipts', label: 'Чеки', icon: ReceiptLongRounded },
   { to: '/inflation', label: 'Инфляция', icon: TrendingUpRounded, pro: true },
   { to: '/ask', label: 'Вопросы', icon: ChatBubbleOutlineRounded, pro: true },
   { to: '/settings', label: 'Настройки', icon: SettingsRounded },
@@ -100,7 +102,12 @@ function NavItemLink({ item }: { item: NavItem }) {
   );
 }
 
+/** Карточка пробного периода. Показываем только тем, у кого он идёт. */
 function ProTrialCard() {
+  const { data: user } = useCurrentUser();
+  if (user?.subscriptionStatus !== 'trialing') return null;
+  const days = daysLeft(user.periodEndsAt) ?? 0;
+
   return (
     <Box
       sx={{
@@ -118,7 +125,10 @@ function ProTrialCard() {
         <AutoAwesomeRounded sx={{ fontSize: 20, color: hcColors.tertiary }} />
         Pro · пробный период
       </Box>
-      <Box sx={{ fontSize: 14, lineHeight: 1.45 }}>Осталось 11 дней, затем 249 ₽ в месяц.</Box>
+      <Box sx={{ fontSize: 14, lineHeight: 1.45 }}>
+        {plural(days, ['Остался', 'Осталось', 'Осталось'])} {days}{' '}
+        {plural(days, ['день', 'дня', 'дней'])}, затем 249 ₽ в месяц.
+      </Box>
       <Button
         component={NavLink}
         to="/settings"

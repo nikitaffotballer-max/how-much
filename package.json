@@ -1,6 +1,6 @@
 {
   "name": "how-much",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.11.2",
@@ -19,7 +19,8 @@
     "db:migrate": "pnpm --filter @how-much/db migrate",
     "db:deploy": "pnpm --filter @how-much/db exec prisma migrate deploy",
     "db:seed": "pnpm --filter @how-much/db seed",
-    "db:studio": "pnpm --filter @how-much/db studio"
+    "db:studio": "pnpm --filter @how-much/db studio",
+    "db:seed:demo": "pnpm --filter @how-much/api seed:demo"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
