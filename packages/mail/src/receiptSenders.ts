@@ -3,7 +3,7 @@
  *
  * Операторы фискальных данных (ОФД) присылают только чеки, поэтому берём все их письма.
  * Магазины присылают ещё и рекламу — от них берём только письма со словом «чек» в теме.
- * Список предварительный: уточним по реальным письмам на этапе 0.
+ * Список пополняем по реальным ящикам: pnpm --filter @how-much/worker mail:survey <адрес>.
  */
 export interface ReceiptSender {
   domain: string;
@@ -18,13 +18,20 @@ export const HC_RECEIPT_SENDERS: readonly ReceiptSender[] = [
   { domain: 'platformaofd.ru' },
   { domain: 'taxcom.ru' },
   { domain: 'ofd-ya.ru' },
+  { domain: 'pofd.ru' },
+  { domain: 'o-data.ru' },
+  { domain: 'checkkontur.ru' },
   { domain: 'sbis.ru', subjectPattern: RECEIPT_SUBJECT },
+  // Saby — новое имя СБИС: чеки приходят с этого домена.
+  { domain: 'saby.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: 'kontur.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: 'ozon.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: 'wildberries.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: 'vkusvill.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: '5ka.ru', subjectPattern: RECEIPT_SUBJECT },
   { domain: 'magnit.ru', subjectPattern: RECEIPT_SUBJECT },
+  { domain: 'mvideo.ru', subjectPattern: RECEIPT_SUBJECT },
+  { domain: 'afisha.ru', subjectPattern: RECEIPT_SUBJECT },
 ];
 
 /** Домен отправителя совпадает с доменом из списка или является его поддоменом (mail.ozon.ru). */

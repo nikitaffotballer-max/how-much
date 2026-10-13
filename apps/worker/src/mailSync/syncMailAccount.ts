@@ -2,8 +2,10 @@ import type { PrismaClient } from '@how-much/db';
 import {
   decryptSecret,
   fetchReceiptEmails,
+  folderCursorsSchema,
   HCMailAuthError,
   type FetchRange,
+  type FolderCursors,
   type ImapServer,
   type MailCredentials,
   type ReceiptEmail,
@@ -59,8 +61,11 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
   if (!account || account.status === 'disabled') return { status: 'skipped' };
 
   const plan = effectivePlan({ subscriptionStatus: account.user.subscription?.status ?? null });
+  // Испорченный JSON не должен останавливать синхронизацию: тогда просто перечитаем папки.
+  const stored = folderCursorsSchema.safeParse(account.folderCursors);
+  const cursors: FolderCursors = stored.success ? stored.data : {};
   const range: FetchRange = {
-    afterUid: account.lastUid,
+    cursors: { ...cursors },
     since: monthsAgo(now, HC_PLAN_LIMITS[plan].importMonths),
   };
   const credentials: MailCredentials = {
@@ -69,7 +74,6 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
   };
   const deleteAfter = new Date(now.getTime() + RAW_EMAIL_TTL_MS);
 
-  let lastUid = account.lastUid;
   let saved = 0;
   try {
     for await (const email of fetchEmails(
@@ -93,7 +97,14 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
       });
       for (const { id } of created) await enqueueParse(id);
       saved += created.length;
-      lastUid = Math.max(lastUid ?? 0, email.uid);
+      const previous = cursors[email.folder];
+      cursors[email.folder] = {
+        uidValidity: email.uidValidity,
+        lastUid:
+          previous?.uidValidity === email.uidValidity
+            ? Math.max(previous.lastUid, email.uid)
+            : email.uid,
+      };
     }
   } catch (error) {
     if (error instanceof HCMailAuthError) {
@@ -109,7 +120,7 @@ export async function syncMailAccount(deps: SyncDeps, mailAccountId: string): Pr
 
   await db.mailAccount.updateMany({
     where: { id: mailAccountId },
-    data: { lastUid, lastSyncAt: now, status: 'active' },
+    data: { folderCursors: cursors, lastSyncAt: now, status: 'active' },
   });
   return { status: 'synced', saved };
 }

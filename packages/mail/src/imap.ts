@@ -1,4 +1,5 @@
 import { ImapFlow, type ImapFlowError, type SearchObject } from 'imapflow';
+import { z } from 'zod';
 import { simpleParser } from 'mailparser';
 import { HC_RECEIPT_SENDERS, isReceiptEmail } from './receiptSenders.js';
 
@@ -67,7 +68,10 @@ export async function verifyMailLogin(server: ImapServer, credentials: MailCrede
 }
 
 export interface ReceiptEmail {
-  /** UID письма в папке «Входящие» — по нему продолжаем со следующей синхронизации. */
+  /** Папка, где лежит письмо: UID уникален только внутри папки. */
+  folder: string;
+  /** UIDVALIDITY папки: если сервер её сменил, старые UID больше ничего не значат. */
+  uidValidity: string;
   uid: number;
   messageId: string;
   fromAddress: string;
@@ -76,15 +80,111 @@ export interface ReceiptEmail {
   html: string;
 }
 
+/** Докуда дочитана папка: со следующей синхронизации берём письма с UID больше lastUid. */
+// type, а не interface: Prisma принимает в Json только типы с индексной сигнатурой.
+export type FolderCursor = {
+  uidValidity: string;
+  lastUid: number;
+};
+
+export type FolderCursors = Record<string, FolderCursor>;
+
+/** Позиции хранятся в базе как JSON: читаем их через схему, а не верим на слово. */
+export const folderCursorsSchema = z.record(
+  z.string(),
+  z.object({ uidValidity: z.string(), lastUid: z.number().int().nonnegative() }),
+);
+
 export interface FetchRange {
-  /** UID последнего уже забранного письма; null — первая синхронизация. */
-  afterUid: number | null;
-  /** Для первой синхронизации: с какой даты брать письма. */
+  /** Позиции по папкам; папку без позиции читаем с даты since. */
+  cursors: FolderCursors;
+  /** Для первой синхронизации папки: с какой даты брать письма. */
   since: Date;
 }
 
 /**
- * Письма-чеки из «Входящих» от отправителей из белого списка.
+ * Папки, где чеков не бывает или где лежат копии: корзина, спам, отправленные, черновики,
+ * а у Gmail — «Вся почта», «Помеченные» и «Важные», которые дублируют остальные папки.
+ */
+const SKIPPED_FOLDERS = new Set([
+  '\\Trash',
+  '\\Junk',
+  '\\Sent',
+  '\\Drafts',
+  '\\All',
+  '\\Flagged',
+  '\\Important',
+]);
+
+/** Письма-чеки из одной папки, открытой на чтение. */
+async function* fetchFolder(
+  client: ImapFlow,
+  server: ImapServer,
+  folder: string,
+  range: FetchRange,
+): AsyncGenerator<ReceiptEmail> {
+  const lock = await client.getMailboxLock(folder, { readOnly: true });
+  try {
+    const uidValidity = String(client.mailbox ? client.mailbox.uidValidity : '');
+    const cursor = range.cursors[folder];
+    const afterUid = cursor && cursor.uidValidity === uidValidity ? cursor.lastUid : null;
+
+    const query: SearchObject = {
+      or: HC_RECEIPT_SENDERS.map(({ domain }) => ({ from: domain })),
+    };
+    if (afterUid === null) query.since = range.since;
+    else query.uid = `${afterUid + 1}:*`;
+
+    // Диапазон «N:*» по стандарту IMAP всегда включает последнее письмо, даже если его UID < N,
+    // поэтому старые UID отбрасываем сами.
+    const found = (await client.search(query, { uid: true })) || [];
+    const uids = found.filter((uid) => afterUid === null || uid > afterUid);
+    if (uids.length === 0) return;
+
+    // Сначала только заголовки: тело скачиваем лишь у писем, похожих на чеки.
+    const receiptUids: number[] = [];
+    for await (const message of client.fetch(uids, { uid: true, envelope: true }, { uid: true })) {
+      const from = message.envelope?.from?.[0]?.address ?? '';
+      if (isReceiptEmail(from, message.envelope?.subject ?? '')) receiptUids.push(message.uid);
+    }
+    if (receiptUids.length === 0) return;
+
+    for await (const message of client.fetch(
+      receiptUids,
+      { uid: true, source: true, internalDate: true },
+      { uid: true },
+    )) {
+      if (!message.source) continue;
+      const parsed = await simpleParser(message.source);
+      const internalDate = message.internalDate ? new Date(message.internalDate) : undefined;
+      yield {
+        folder,
+        uidValidity,
+        uid: message.uid,
+        // Message-ID бывает пустым у самописных рассылок — тогда отличаем письмо по папке и UID.
+        messageId: parsed.messageId ?? `${folder}-${uidValidity}-${message.uid}@${server.host}`,
+        fromAddress: parsed.from?.value[0]?.address ?? '',
+        subject: parsed.subject ?? '',
+        receivedAt: internalDate ?? parsed.date ?? new Date(),
+        html: parsed.html || parsed.textAsHtml || '',
+      };
+    }
+  } finally {
+    lock.release();
+  }
+}
+
+/** Папки, которые стоит проверять на чеки: Mail.ru, например, сам кладёт их в «Чеки». */
+async function receiptFolders(client: ImapFlow): Promise<string[]> {
+  const folders = await client.list();
+  return folders
+    .filter((folder) => !folder.flags.has('\\Noselect'))
+    .filter((folder) => !SKIPPED_FOLDERS.has(folder.specialUse ?? ''))
+    .map((folder) => folder.path);
+}
+
+/**
+ * Письма-чеки от отправителей из белого списка из всех папок, кроме служебных.
  * Ящик открываем только на чтение: письма не помечаются прочитанными и не удаляются (ТЗ, раздел 9).
  */
 export async function* fetchReceiptEmails(
@@ -94,54 +194,78 @@ export async function* fetchReceiptEmails(
 ): AsyncGenerator<ReceiptEmail> {
   const client = await connect(server, credentials);
   try {
-    const lock = await client.getMailboxLock('INBOX', { readOnly: true });
-    try {
-      const query: SearchObject = {
-        or: HC_RECEIPT_SENDERS.map(({ domain }) => ({ from: domain })),
-      };
-      if (range.afterUid === null) query.since = range.since;
-      else query.uid = `${range.afterUid + 1}:*`;
-
-      // Диапазон «N:*» по стандарту IMAP всегда включает последнее письмо, даже если его UID < N,
-      // поэтому старые UID отбрасываем сами.
-      const found = (await client.search(query, { uid: true })) || [];
-      const uids = found.filter((uid) => range.afterUid === null || uid > range.afterUid);
-      if (uids.length === 0) return;
-
-      // Сначала только заголовки: тело скачиваем лишь у писем, похожих на чеки.
-      const receiptUids: number[] = [];
-      for await (const message of client.fetch(
-        uids,
-        { uid: true, envelope: true },
-        { uid: true },
-      )) {
-        const from = message.envelope?.from?.[0]?.address ?? '';
-        if (isReceiptEmail(from, message.envelope?.subject ?? '')) receiptUids.push(message.uid);
-      }
-      if (receiptUids.length === 0) return;
-
-      for await (const message of client.fetch(
-        receiptUids,
-        { uid: true, source: true, internalDate: true },
-        { uid: true },
-      )) {
-        if (!message.source) continue;
-        const parsed = await simpleParser(message.source);
-        const internalDate = message.internalDate ? new Date(message.internalDate) : undefined;
-        yield {
-          uid: message.uid,
-          // Message-ID бывает пустым у самописных рассылок — тогда отличаем письмо по UID.
-          messageId: parsed.messageId ?? `uid-${message.uid}@${server.host}`,
-          fromAddress: parsed.from?.value[0]?.address ?? '',
-          subject: parsed.subject ?? '',
-          receivedAt: internalDate ?? parsed.date ?? new Date(),
-          html: parsed.html || parsed.textAsHtml || '',
-        };
-      }
-    } finally {
-      lock.release();
+    for (const folder of await receiptFolders(client)) {
+      yield* fetchFolder(client, server, folder, range);
     }
   } finally {
     await disconnect(client);
   }
+}
+
+export interface SenderSurveyRow {
+  folder: string;
+  domain: string;
+  count: number;
+  /** Одна тема для примера — чтобы понять, что это за письма. */
+  sampleSubject: string;
+  /** Сколько из них забирает синхронизация (белый список отправителей и тема). */
+  taken: number;
+}
+
+/**
+ * Обзор ящика для этапа 0 ТЗ: какие отправители присылают письма со словом «чек» в теме
+ * и в каких папках они лежат. Читаем только заголовки, ящик открываем на чтение.
+ */
+export async function surveyReceiptSenders(
+  server: ImapServer,
+  credentials: MailCredentials,
+  since: Date,
+): Promise<SenderSurveyRow[]> {
+  const client = await connect(server, credentials);
+  const rows = new Map<string, SenderSurveyRow>();
+  try {
+    for (const path of await receiptFolders(client)) {
+      const lock = await client.getMailboxLock(path, { readOnly: true });
+      try {
+        const uids =
+          (await client.search(
+            {
+              since,
+              or: [
+                { subject: 'чек' },
+                { subject: 'receipt' },
+                ...HC_RECEIPT_SENDERS.map(({ domain }) => ({ from: domain })),
+              ],
+            },
+            { uid: true },
+          )) || [];
+        if (uids.length === 0) continue;
+        for await (const message of client.fetch(
+          uids,
+          { uid: true, envelope: true },
+          { uid: true },
+        )) {
+          const from = message.envelope?.from?.[0]?.address ?? '';
+          const subject = message.envelope?.subject ?? '';
+          const domain = from.split('@')[1]?.toLowerCase() ?? '?';
+          const key = `${path}|${domain}`;
+          const row = rows.get(key) ?? {
+            folder: path,
+            domain,
+            count: 0,
+            sampleSubject: subject,
+            taken: 0,
+          };
+          row.count += 1;
+          if (isReceiptEmail(from, subject)) row.taken += 1;
+          rows.set(key, row);
+        }
+      } finally {
+        lock.release();
+      }
+    }
+  } finally {
+    await disconnect(client);
+  }
+  return [...rows.values()].sort((a, b) => b.count - a.count);
 }

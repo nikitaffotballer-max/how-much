@@ -2,6 +2,7 @@ import { ImapFlow } from 'imapflow';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   fetchReceiptEmails,
+  type FolderCursors,
   HCMailAuthError,
   HCMailConnectionError,
   verifyMailLogin,
@@ -60,6 +61,9 @@ describe.skipIf(!port)('IMAP на тестовом сервере', () => {
     await admin.append('INBOX', rawEmail('noreply@ofd.ru', 'Кассовый чек', now));
     await admin.append('INBOX', rawEmail('news@ozon.ru', 'Распродажа', now));
     await admin.append('INBOX', rawEmail('friend@gmail.com', 'Чек за ужин', now));
+    // Как у Mail.ru: почта сама раскладывает чеки в отдельную папку.
+    await admin.mailboxCreate('Receipts').catch(() => undefined);
+    await admin.append('Receipts', rawEmail('noreply@chek.pofd.ru', 'Чек и подарок', now));
   });
 
   afterAll(() => admin.logout());
@@ -74,14 +78,13 @@ describe.skipIf(!port)('IMAP на тестовом сервере', () => {
     );
   });
 
-  it('забирает только чеки и не помечает их прочитанными', async () => {
+  it('забирает только чеки из всех папок и не помечает их прочитанными', async () => {
     const since = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const emails = await collect(
-      fetchReceiptEmails(server, credentials, { afterUid: null, since }),
-    );
+    const emails = await collect(fetchReceiptEmails(server, credentials, { cursors: {}, since }));
 
-    expect(emails.map((email) => [email.fromAddress, email.subject])).toEqual([
-      ['noreply@ofd.ru', 'Кассовый чек'],
+    expect(emails.map((email) => [email.folder, email.fromAddress, email.subject])).toEqual([
+      ['INBOX', 'noreply@ofd.ru', 'Кассовый чек'],
+      ['Receipts', 'noreply@chek.pofd.ru', 'Чек и подарок'],
     ]);
     expect(emails[0]?.html).toContain('noreply@ofd.ru');
 
@@ -95,15 +98,17 @@ describe.skipIf(!port)('IMAP на тестовом сервере', () => {
 
   it('при повторной синхронизации берёт только новые письма', async () => {
     const since = new Date(0);
-    const [first] = await collect(
-      fetchReceiptEmails(server, credentials, { afterUid: null, since }),
-    );
-    const afterUid = first?.uid ?? 0;
+    const cursors: FolderCursors = {};
+    for (const email of await collect(
+      fetchReceiptEmails(server, credentials, { cursors, since }),
+    )) {
+      cursors[email.folder] = { uidValidity: email.uidValidity, lastUid: email.uid };
+    }
 
-    expect(await collect(fetchReceiptEmails(server, credentials, { afterUid, since }))).toEqual([]);
+    expect(await collect(fetchReceiptEmails(server, credentials, { cursors, since }))).toEqual([]);
 
     await admin.append('INBOX', rawEmail('echeck@1-ofd.ru', 'Чек', new Date()));
-    const fresh = await collect(fetchReceiptEmails(server, credentials, { afterUid, since }));
+    const fresh = await collect(fetchReceiptEmails(server, credentials, { cursors, since }));
     expect(fresh.map((email) => email.fromAddress)).toEqual(['echeck@1-ofd.ru']);
   });
 });
