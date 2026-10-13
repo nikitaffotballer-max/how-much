@@ -1,8 +1,9 @@
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
-import { randomUUID } from 'node:crypto';
-import { buildApp } from '../app.js';
+import { randomBytes, randomUUID } from 'node:crypto';
+import { buildApp, type AppDeps } from '../app.js';
 import { SESSION_COOKIE } from '../auth/session.js';
 import { loadConfig } from '../config.js';
+import type { MailGateway } from '../mail/mailGateway.js';
 
 /** Все тестовые пользователи живут в этом домене — так их легко удалить после тестов. */
 export const TEST_EMAIL_DOMAIN = 'test.how-much.local';
@@ -12,8 +13,36 @@ export function uniqueTestEmail(): string {
   return `user-${randomUUID()}@${TEST_EMAIL_DOMAIN}`;
 }
 
-export function buildTestApp(env: Record<string, string> = {}) {
-  return buildApp(loadConfig({ ...process.env, NODE_ENV: 'test', ...env }));
+/** Почта без IMAP и Redis: запоминает, что у неё просили, и падает, если задать ошибку. */
+export interface FakeMailGateway extends MailGateway {
+  verifyError: Error | null;
+  syncRequests: string[];
+}
+
+export function createFakeMailGateway(): FakeMailGateway {
+  const fake: FakeMailGateway = {
+    verifyError: null,
+    syncRequests: [],
+    async verifyLogin() {
+      if (fake.verifyError) throw fake.verifyError;
+    },
+    async enqueueSync(mailAccountId: string) {
+      fake.syncRequests.push(mailAccountId);
+    },
+    async close() {},
+  };
+  return fake;
+}
+
+export function buildTestApp(env: Record<string, string> = {}, deps: AppDeps = {}) {
+  const config = loadConfig({
+    ...process.env,
+    NODE_ENV: 'test',
+    // В CI нет .env: ключ шифрования генерируем на каждый прогон.
+    MAIL_ENCRYPTION_KEY: process.env.MAIL_ENCRYPTION_KEY ?? randomBytes(32).toString('base64'),
+    ...env,
+  });
+  return buildApp(config, {}, { mail: createFakeMailGateway(), ...deps });
 }
 
 export async function deleteTestUsers(app: FastifyInstance) {
