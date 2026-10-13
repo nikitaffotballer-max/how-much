@@ -66,7 +66,8 @@ const receiptParseWorker = new Worker<ReceiptParseJob>(
     await job.log(`Письмо ${job.data.rawEmailId}: ${result}`);
   },
   // Каждый разбор — отдельный запрос к модели; больше двух сразу упирается в лимиты подписки.
-  { connection, concurrency: 2 },
+  // Выключенный разбор не берёт задачи вовсе: они копятся в очереди и не теряются.
+  { connection, concurrency: 2, autorun: config.RECEIPT_PARSE_ENABLED },
 );
 
 mailSyncWorker.on('failed', (job, error) => {
@@ -84,7 +85,12 @@ receiptParseWorker.on('failed', async (job, error) => {
   }
 });
 
-console.log(`Воркеры запущены, Redis: ${config.REDIS_URL}, модель: ${llm.name}`);
+console.log(
+  `Воркеры запущены, Redis: ${config.REDIS_URL}, ` +
+    (config.RECEIPT_PARSE_ENABLED
+      ? `разбор писем: ${llm.name}`
+      : 'разбор писем выключен (RECEIPT_PARSE_ENABLED=false)'),
+);
 
 async function shutdown() {
   await Promise.all([mailSyncWorker.close(), receiptParseWorker.close()]);

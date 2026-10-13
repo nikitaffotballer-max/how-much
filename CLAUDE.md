@@ -20,7 +20,7 @@
 
 ## Команды
 
-- `pnpm dev` — фронтенд (http://localhost:5173) + API (:3000); `pnpm dev:worker` — воркеры (нужен Redis): синхронизация почты раз в 15 минут.
+- `pnpm dev` — фронтенд (http://localhost:5173) + API (:3000); `pnpm dev:worker` — воркеры (нужен Redis): синхронизация почты раз в 15 минут. Разбор писем моделью выключен (`RECEIPT_PARSE_ENABLED=false`), чтобы не тратить лимиты подписки автора: письма копятся в очереди; включать только по просьбе автора.
 - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format`.
 - `docker compose up -d` — PostgreSQL и Redis. `pnpm db:migrate` — новая миграция (после правки схемы), `pnpm db:seed` — справочник категорий, `pnpm db:studio` — просмотр базы, `pnpm db:seed:admin` — локальный тестовый пользователь admin / admin.
 - `docker compose --profile test up -d` — тестовый IMAP-сервер (Dovecot); с ним `IMAP_TEST_PORT=31993 pnpm test` прогоняет и интеграционные тесты почты.

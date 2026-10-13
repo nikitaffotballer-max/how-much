@@ -9,6 +9,11 @@ const envSchema = z.object({
   CLAUDE_CLI_PATH: z.string().default('claude'),
   /** Модель для разбора чеков: haiku — быстрее и экономнее, sonnet — точнее. */
   LLM_MODEL: z.string().default('haiku'),
+  /**
+   * Разбирать ли письма моделью. По умолчанию нет: каждый разбор тратит лимиты подписки,
+   * а при разработке почта синхронизируется часто. Письма ждут в очереди до включения.
+   */
+  RECEIPT_PARSE_ENABLED: z.stringbool().default(false),
 });
 
 export type WorkerConfig = z.infer<typeof envSchema>;
