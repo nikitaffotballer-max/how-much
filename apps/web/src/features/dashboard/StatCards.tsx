@@ -4,6 +4,7 @@ import SavingsRounded from '@mui/icons-material/SavingsRounded';
 import Box from '@mui/material/Box';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
+import type { PeriodLabels } from '../../lib/periods';
 import { hcColors } from '../../theme/hcTheme';
 
 interface StatCardProps {
@@ -60,7 +61,7 @@ function StatCard({ icon, iconBg, iconColor, label, value, hint, to }: StatCardP
 type StatCardsProps = Pick<
   DashboardSummary,
   'receiptsCount' | 'needsAttentionCount' | 'averageReceipt' | 'previousAverageReceipt'
->;
+> & { labels: PeriodLabels };
 
 export function StatCards(props: StatCardsProps) {
   return (
@@ -95,7 +96,9 @@ export function StatCards(props: StatCardsProps) {
         value={formatRub(props.averageReceipt)}
         hint={
           <Box component="span" sx={{ color: 'text.secondary' }}>
-            в прошлом месяце {formatRub(props.previousAverageReceipt)}
+            {props.previousAverageReceipt > 0
+              ? `${props.labels.previously} ${formatRub(props.previousAverageReceipt)}`
+              : `${props.labels.previously} чеков не было`}
           </Box>
         }
       />

@@ -12,6 +12,7 @@ import {
   mailAccountSchema,
   type ConnectMailAccount,
   type CreateCashReceipt,
+  type DashboardQuery,
   type Credentials,
   type LoginCredentials,
   type CurrentUser,
@@ -83,8 +84,8 @@ export const hcApi = {
   login: (credentials: LoginCredentials) =>
     request('/auth/login', currentUserSchema, { method: 'POST', body: credentials }),
   logout: () => request('/auth/logout', noContent, { method: 'POST' }),
-  getDashboardSummary: (): Promise<DashboardSummary> =>
-    request('/analytics/summary', dashboardSummarySchema),
+  getDashboardSummary: (query: DashboardQuery): Promise<DashboardSummary> =>
+    request(`/analytics/summary?${new URLSearchParams(query)}`, dashboardSummarySchema),
   getMailAccounts: () => request('/mail-accounts', mailAccountListSchema),
   connectMailAccount: (body: ConnectMailAccount) =>
     request('/mail-accounts', mailAccountSchema, { method: 'POST', body }),
