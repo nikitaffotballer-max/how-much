@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { credentialsSchema } from '@how-much/shared';
+import { loginSchema } from '@how-much/shared';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
@@ -10,14 +10,14 @@ import { Link as RouterLink } from 'react-router';
 import { hcApi } from '../../api/hcApi';
 import { AuthLayout } from './AuthLayout';
 import { ServerError } from '../../components/ServerError';
-import { DemoSignIn, EmailField, FormHeader, PasswordField } from './authFields';
+import { EmailField, FormHeader, PasswordField } from './authFields';
 import { useFinishSignIn } from './useFinishSignIn';
 
 export function LoginPage() {
   const finishSignIn = useFinishSignIn();
   const login = useMutation({ mutationFn: hcApi.login, onSuccess: finishSignIn });
   const form = useForm({
-    resolver: zodResolver(credentialsSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
   const { errors } = form.formState;
@@ -47,7 +47,6 @@ export function LoginPage() {
         <Button type="submit" variant="contained" size="large" loading={login.isPending}>
           Войти
         </Button>
-        <DemoSignIn />
         <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>
           Ещё нет аккаунта?{' '}
           <Link component={RouterLink} to="/register" sx={{ fontWeight: 600 }}>

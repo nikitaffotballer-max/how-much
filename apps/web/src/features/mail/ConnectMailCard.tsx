@@ -106,7 +106,8 @@ interface ConnectMailCardProps {
 export function ConnectMailCard({ onConnected, onCancel }: ConnectMailCardProps) {
   const { data: user } = useCurrentUser();
   // Чаще всего чеки приходят на тот же адрес, с которым человек зарегистрировался.
-  const userEmail = user?.email ?? '';
+  // У локального тестового пользователя admin логин не email — тогда поле оставляем пустым.
+  const userEmail = user?.email.includes('@') ? user.email : '';
   const form = useForm({
     resolver: zodResolver(connectMailAccountSchema),
     defaultValues: {

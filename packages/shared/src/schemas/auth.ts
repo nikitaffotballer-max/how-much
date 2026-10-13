@@ -17,6 +17,20 @@ export const credentialsSchema = z.object({
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 
+/**
+ * Вход проверяет только, что поля заполнены: правила формата и длины — для регистрации.
+ * Так входит и локальный тестовый пользователь admin (см. pnpm db:seed:admin).
+ */
+export const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().min(1, { error: 'Введите email' }),
+  password: z
+    .string()
+    .min(1, { error: 'Введите пароль' })
+    .max(128, { error: 'Пароль слишком длинный' }),
+});
+
+export type LoginCredentials = z.infer<typeof loginSchema>;
+
 /** Ответ GET /api/v1/me и успешных /auth/register, /auth/login. */
 export const currentUserSchema = z.object({
   id: z.string(),

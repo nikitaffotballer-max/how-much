@@ -89,6 +89,12 @@ describe('вход и выход', () => {
     }
   });
 
+  it('при входе не проверяет формат логина и длину пароля — только при регистрации', async () => {
+    const res = await login('admin-that-does-not-exist', 'x');
+    expect(res.statusCode).toBe(401);
+    expect(res.json()).toMatchObject({ code: 'invalid_credentials' });
+  });
+
   it('без сессии профиль недоступен', async () => {
     expect((await me()).statusCode).toBe(401);
   });
@@ -103,31 +109,5 @@ describe('вход и выход', () => {
     });
     expect(logout.statusCode).toBe(204);
     expect((await me(token)).statusCode).toBe(401);
-  });
-});
-
-describe('демо-вход', () => {
-  it('если демо-пользователя нет в базе — 404', async () => {
-    const demoApp = await buildTestApp({ DEMO_EMAIL: uniqueTestEmail() });
-    try {
-      const res = await demoApp.inject({ method: 'POST', url: '/api/v1/auth/demo' });
-      expect(res.statusCode).toBe(404);
-      expect(res.json()).toMatchObject({ code: 'demo_unavailable' });
-    } finally {
-      await demoApp.close();
-    }
-  });
-
-  it('пускает в демо-аккаунт без пароля', async () => {
-    const demo = await registerTestUser(app);
-    const demoApp = await buildTestApp({ DEMO_EMAIL: demo.email });
-    try {
-      const res = await demoApp.inject({ method: 'POST', url: '/api/v1/auth/demo' });
-      expect(res.statusCode).toBe(200);
-      expect(res.json()).toMatchObject({ email: demo.email });
-      expect(sessionCookie(res)).toBeTruthy();
-    } finally {
-      await demoApp.close();
-    }
   });
 });

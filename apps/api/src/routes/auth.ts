@@ -1,5 +1,5 @@
 import type { PrismaClient, Subscription, User } from '@how-much/db';
-import { credentialsSchema, effectivePlan, type CurrentUser } from '@how-much/shared';
+import { credentialsSchema, effectivePlan, loginSchema, type CurrentUser } from '@how-much/shared';
 import type { FastifyPluginAsync, FastifyReply } from 'fastify';
 import { getDummyHash, hashPassword, verifyPassword } from '../auth/password.js';
 import { requireUserId } from '../auth/requestUser.js';
@@ -68,25 +68,13 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
   });
 
   app.post('/auth/login', { config: authRateLimit }, async (request, reply) => {
-    const { email, password } = credentialsSchema.parse(request.body);
+    const { email, password } = loginSchema.parse(request.body);
     const user = await findUserByEmail(app.db, email);
 
     const passwordOk = await verifyPassword(user?.passwordHash ?? (await getDummyHash()), password);
     if (!user || !passwordOk) {
       // Один и тот же ответ для «нет такого email» и «неверный пароль».
       throw new HCHttpError(401, 'invalid_credentials', 'Неверный email или пароль');
-    }
-
-    await startSession(reply, user.id, request.headers['user-agent']);
-    return toCurrentUser(user);
-  });
-
-  /** Вход в демо-аккаунт без пароля — чтобы посмотреть сервис, не подключая почту. */
-  app.post('/auth/demo', { config: authRateLimit }, async (request, reply) => {
-    const demoEmail = app.hcConfig.DEMO_EMAIL;
-    const user = demoEmail ? await findUserByEmail(app.db, demoEmail) : null;
-    if (!user) {
-      throw new HCHttpError(404, 'demo_unavailable', 'Демо-аккаунт сейчас недоступен');
     }
 
     await startSession(reply, user.id, request.headers['user-agent']);

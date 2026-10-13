@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { hcApi } from '../../api/hcApi';
 import { AuthLayout } from './AuthLayout';
 import { ServerError } from '../../components/ServerError';
-import { DemoSignIn, EmailField, FormHeader, PasswordField } from './authFields';
+import { EmailField, FormHeader, PasswordField } from './authFields';
 import { useFinishSignIn } from './useFinishSignIn';
 
 /** Согласие на обработку персональных данных обязательно по 152-ФЗ (ТЗ, раздел 9). */
@@ -57,10 +57,7 @@ export function RegisterPage() {
             control={<Checkbox {...form.register('consent')} />}
             label={
               <Typography sx={{ fontSize: 14 }}>
-                Согласен с{' '}
-                <Link href="#privacy" sx={{ fontWeight: 600 }}>
-                  обработкой персональных данных
-                </Link>
+                Согласен с обработкой персональных данных
               </Typography>
             }
           />
@@ -70,7 +67,6 @@ export function RegisterPage() {
         <Button type="submit" variant="contained" size="large" loading={register.isPending}>
           Зарегистрироваться
         </Button>
-        <DemoSignIn />
         <Typography sx={{ textAlign: 'center', color: 'text.secondary' }}>
           Уже есть аккаунт?{' '}
           <Link component={RouterLink} to="/login" sx={{ fontWeight: 600 }}>

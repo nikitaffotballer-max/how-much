@@ -11,8 +11,6 @@ const envSchema = z.object({
   REDIS_URL: z.string().default('redis://localhost:6379'),
   /** Ключ шифрования паролей приложений от почты (AES-256-GCM): 32 байта в base64. */
   MAIL_ENCRYPTION_KEY: encryptionKeyEnvSchema,
-  /** Email демо-аккаунта. Не задан — кнопка «Посмотреть демо» отключена. */
-  DEMO_EMAIL: z.email().optional(),
 });
 
 export type Config = z.infer<typeof envSchema>;

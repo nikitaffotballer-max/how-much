@@ -6,6 +6,7 @@ import {
   mailAccountSchema,
   type ConnectMailAccount,
   type Credentials,
+  type LoginCredentials,
   type CurrentUser,
   type DashboardSummary,
 } from '@how-much/shared';
@@ -72,9 +73,8 @@ export const hcApi = {
   },
   register: (credentials: Credentials) =>
     request('/auth/register', currentUserSchema, { method: 'POST', body: credentials }),
-  login: (credentials: Credentials) =>
+  login: (credentials: LoginCredentials) =>
     request('/auth/login', currentUserSchema, { method: 'POST', body: credentials }),
-  loginDemo: () => request('/auth/demo', currentUserSchema, { method: 'POST' }),
   logout: () => request('/auth/logout', noContent, { method: 'POST' }),
   getDashboardSummary: (): Promise<DashboardSummary> =>
     request('/analytics/summary', dashboardSummarySchema),
