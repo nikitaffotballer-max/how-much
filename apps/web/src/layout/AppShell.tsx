@@ -8,8 +8,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Fab from '@mui/material/Fab';
 import { plural } from '@how-much/shared';
-import { useState, type ReactNode } from 'react';
-import { NavLink } from 'react-router';
+import { useEffect, useState, type ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router';
 import { HCLogo } from '../components/HCLogo';
 import { daysLeft, useCurrentUser } from '../features/auth/useCurrentUser';
 import { AddCashDialog } from '../features/cash/AddCashDialog';
@@ -49,6 +49,7 @@ function DrawerLink({ item }: { item: NavItem }) {
         textDecoration: 'none',
         fontWeight: 500,
         fontSize: 15,
+        transition: 'background-color 200ms, color 200ms',
         '&:hover': { bgcolor: 'rgba(0,0,0,0.04)' },
         '&.active': {
           bgcolor: hcColors.secondaryContainer,
@@ -90,6 +91,7 @@ function BarLink({ item }: { item: NavItem }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          transition: 'background-color 250ms',
         },
         '&.active': { color: hcColors.onSecondaryContainer, fontWeight: 700 },
         '&.active .indicator': { bgcolor: hcColors.secondaryContainer },
@@ -141,6 +143,12 @@ function ProTrialCard() {
 export function AppShell({ children }: { children: ReactNode }) {
   const [cashOpen, setCashOpen] = useState(false);
   const openCash = () => setCashOpen(true);
+  const { pathname } = useLocation();
+
+  // Новая страница открывается с начала, а не с места, где листали прошлую.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -192,12 +200,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           pt: 2.5,
           // Снизу на телефоне — место под нижнюю панель.
           pb: { xs: 13, md: 6 },
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2.5,
         }}
       >
-        {children}
+        {/* key по адресу: при переходе страница заново проигрывает появление. */}
+        <Box
+          key={pathname}
+          className="hc-page"
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+        >
+          {children}
+        </Box>
       </Box>
 
       <Box

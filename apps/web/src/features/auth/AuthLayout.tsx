@@ -119,6 +119,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
         <Brand />
         <Box
           component="main"
+          className="hc-page"
           sx={{
             gridArea: 'form',
             alignSelf: 'center',

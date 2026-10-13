@@ -1,5 +1,8 @@
 import { createTheme } from '@mui/material/styles';
 
+/** Кривая Material 3 «emphasized decelerate» — для появления элементов. */
+export const HC_EASING = 'cubic-bezier(0.05, 0.7, 0.1, 1)';
+
 /**
  * Цвета Material 3, которых нет в стандартной палитре MUI (container-цвета, поверхности).
  * Значения взяты из макета docs/design/DashboardM3.dc.html.
@@ -44,7 +47,44 @@ export const hcTheme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: { body: { fontVariantNumeric: 'tabular-nums' } },
+      styleOverrides: {
+        body: { fontVariantNumeric: 'tabular-nums' },
+        // Анимации Material 3: «выразительное замедление» — быстрый старт, мягкая посадка.
+        '@keyframes hc-fade-up': {
+          from: { opacity: 0, transform: 'translateY(8px)' },
+          to: { opacity: 1, transform: 'none' },
+        },
+        '@keyframes hc-grow-x': { from: { transform: 'scaleX(0)' }, to: { transform: 'none' } },
+        '@keyframes hc-grow-y': { from: { transform: 'scaleY(0)' }, to: { transform: 'none' } },
+        /** Новая страница появляется, а не возникает рывком. */
+        '.hc-page': { animation: `hc-fade-up 280ms ${HC_EASING}` },
+        /** Блоки внутри появляются по очереди, сверху вниз. */
+        '.hc-stagger > *': {
+          animation: `hc-fade-up 360ms ${HC_EASING} both`,
+          ...Object.fromEntries(
+            Array.from({ length: 8 }, (_, i) => [
+              `&:nth-of-type(${i + 1})`,
+              { animationDelay: `${i * 45}ms` },
+            ]),
+          ),
+        },
+        '.hc-grow-x': {
+          transformOrigin: 'left',
+          animation: `hc-grow-x 600ms ${HC_EASING} 120ms both`,
+        },
+        '.hc-grow-y': {
+          transformOrigin: 'bottom',
+          animation: `hc-grow-y 600ms ${HC_EASING} 120ms both`,
+        },
+        // Кому от движения плохо, тот включил это в системе — уважаем.
+        '@media (prefers-reduced-motion: reduce)': {
+          '*, *::before, *::after': {
+            animationDuration: '1ms !important',
+            animationDelay: '0ms !important',
+            transitionDuration: '1ms !important',
+          },
+        },
+      },
     },
     MuiCard: {
       defaultProps: { elevation: 0 },

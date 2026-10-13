@@ -32,6 +32,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { hcApi } from '../../api/hcApi';
 import { CategoryIcon } from '../../components/CategoryIcon';
+import { RowsSkeleton } from '../../components/RowsSkeleton';
 import { ServerError } from '../../components/ServerError';
 import { UserMenu } from '../../layout/UserMenu';
 import { formatDateTime } from '../../lib/dates';
@@ -252,10 +253,26 @@ export function ReceiptPage() {
       </Box>
 
       {receipt.isPending && (
-        <>
-          <Skeleton variant="rounded" height={140} sx={{ borderRadius: 4 }} />
-          <Skeleton variant="rounded" height={280} sx={{ borderRadius: 4 }} />
-        </>
+        <Box aria-busy sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          <Box
+            sx={{
+              bgcolor: hcColors.surfaceContainer,
+              borderRadius: 4,
+              p: { xs: 2.5, md: 3.5 },
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2.5,
+            }}
+          >
+            <Skeleton variant="circular" width={68} height={68} sx={{ flex: 'none' }} />
+            <Box sx={{ flex: 1 }}>
+              <Skeleton variant="text" width="50%" height={36} />
+              <Skeleton variant="text" width="35%" height={22} />
+            </Box>
+            <Skeleton variant="text" width={110} height={48} />
+          </Box>
+          <RowsSkeleton rows={4} />
+        </Box>
       )}
 
       {receipt.isError && (
@@ -273,7 +290,7 @@ export function ReceiptPage() {
       )}
 
       {receipt.data && (
-        <>
+        <Box className="hc-stagger" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <ReceiptHeader receipt={receipt.data} />
           <ItemsList receipt={receipt.data} />
           {receipt.data.fiscal && (
@@ -284,7 +301,7 @@ export function ReceiptPage() {
               {receipt.data.fiscal.fpd && ` · ФП ${receipt.data.fiscal.fpd}`}
             </Typography>
           )}
-        </>
+        </Box>
       )}
 
       <Dialog

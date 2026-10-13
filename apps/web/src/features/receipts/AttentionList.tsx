@@ -3,10 +3,10 @@ import ReplayRounded from '@mui/icons-material/ReplayRounded';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { hcApi } from '../../api/hcApi';
+import { RowsSkeleton } from '../../components/RowsSkeleton';
 import { formatPurchaseTime } from '../../lib/dates';
 import { hcColors } from '../../theme/hcTheme';
 
@@ -20,7 +20,7 @@ export function AttentionList() {
   const retry = useMutation({ mutationFn: hcApi.retryAttentionEmail, onSuccess: refresh });
   const dismiss = useMutation({ mutationFn: hcApi.dismissAttentionEmail, onSuccess: refresh });
 
-  if (emails.isPending) return <Skeleton variant="rounded" height={120} sx={{ borderRadius: 4 }} />;
+  if (emails.isPending) return <RowsSkeleton rows={2} heading={false} />;
   if (emails.isError) {
     return (
       <Alert severity="error" sx={{ borderRadius: 3 }}>
@@ -37,7 +37,7 @@ export function AttentionList() {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <Box className="hc-stagger" sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
       {emails.data.map((email) => (
         <Box
           key={email.id}

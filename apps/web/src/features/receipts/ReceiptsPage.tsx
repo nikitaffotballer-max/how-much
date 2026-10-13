@@ -11,15 +11,15 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import InputAdornment from '@mui/material/InputAdornment';
-import Skeleton from '@mui/material/Skeleton';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { hcApi } from '../../api/hcApi';
+import { RowsSkeleton } from '../../components/RowsSkeleton';
 import { EnvelopeIllustration } from '../../illustrations/EnvelopeIllustration';
 import { PageHeader } from '../../layout/PageHeader';
 import { formatDayHeading, formatTime, localDayKey } from '../../lib/dates';
@@ -101,14 +101,15 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
       }),
     initialPageParam: null as string | null,
     getNextPageParam: (page) => page.nextCursor,
+    // Пока ищем по новому слову, показываем прошлый результат, а не скелетон на каждую букву.
+    placeholderData: keepPreviousData,
   });
 
   if (receipts.isPending) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }} aria-busy>
-        {[0, 1, 2].map((i) => (
-          <Skeleton key={i} variant="rounded" height={72} sx={{ borderRadius: 3 }} />
-        ))}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <RowsSkeleton rows={3} />
+        <RowsSkeleton rows={2} />
       </Box>
     );
   }
@@ -158,7 +159,16 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      className="hc-stagger"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        opacity: receipts.isPlaceholderData ? 0.55 : 1,
+        transition: 'opacity 200ms',
+      }}
+    >
       {groupByDay(all).map((group) => (
         <Box
           key={group.key}
@@ -213,7 +223,7 @@ export function ReceiptsPage() {
 
   return (
     <>
-      <PageHeader title="Чеки" subtitle="Все покупки из почты" />
+      <PageHeader title="Чеки" subtitle="Покупки из почты и наличными" />
 
       <Tabs
         value={tab}
