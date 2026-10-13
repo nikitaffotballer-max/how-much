@@ -1,5 +1,11 @@
 import {
   apiErrorSchema,
+  attentionEmailListSchema,
+  categoryListSchema,
+  receiptDetailSchema,
+  receiptItemSchema,
+  receiptListSchema,
+  type ReceiptListQuery,
   currentUserSchema,
   dashboardSummarySchema,
   mailAccountListSchema,
@@ -24,7 +30,7 @@ export class HCApiError extends Error {
 }
 
 interface RequestOptions {
-  method?: 'GET' | 'POST' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
 }
 
@@ -85,4 +91,20 @@ export const hcApi = {
     request(`/mail-accounts/${id}`, noContent, { method: 'DELETE' }),
   syncMailAccount: (id: string) =>
     request(`/mail-accounts/${id}/sync`, noContent, { method: 'POST' }),
+  getReceipts: (query: ReceiptListQuery) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== '') params.set(key, String(value));
+    }
+    return request(`/receipts?${params}`, receiptListSchema);
+  },
+  getReceipt: (id: string) => request(`/receipts/${id}`, receiptDetailSchema),
+  getCategories: () => request('/categories', categoryListSchema),
+  updateReceiptItem: ({ id, categoryKey }: { id: string; categoryKey: string }) =>
+    request(`/receipt-items/${id}`, receiptItemSchema, { method: 'PATCH', body: { categoryKey } }),
+  getAttentionEmails: () => request('/receipts/attention', attentionEmailListSchema),
+  retryAttentionEmail: (id: string) =>
+    request(`/receipts/attention/${id}/retry`, noContent, { method: 'POST' }),
+  dismissAttentionEmail: (id: string) =>
+    request(`/receipts/attention/${id}/dismiss`, noContent, { method: 'POST' }),
 };

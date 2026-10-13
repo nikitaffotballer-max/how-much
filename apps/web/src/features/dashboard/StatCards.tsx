@@ -3,6 +3,7 @@ import ReceiptLongRounded from '@mui/icons-material/ReceiptLongRounded';
 import SavingsRounded from '@mui/icons-material/SavingsRounded';
 import Box from '@mui/material/Box';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 import { hcColors } from '../../theme/hcTheme';
 
 interface StatCardProps {
@@ -12,13 +13,19 @@ interface StatCardProps {
   label: string;
   value: string;
   hint: ReactNode;
+  /** Куда ведёт карточка. */
+  to: string;
 }
 
-function StatCard({ icon, iconBg, iconColor, label, value, hint }: StatCardProps) {
+function StatCard({ icon, iconBg, iconColor, label, value, hint, to }: StatCardProps) {
   return (
     <Box
+      component={Link}
+      to={to}
       sx={{
         bgcolor: '#FFFFFF',
+        color: 'text.primary',
+        textDecoration: 'none',
         borderRadius: 6,
         p: 2.5,
         display: 'flex',
@@ -63,6 +70,7 @@ export function StatCards(props: StatCardsProps) {
       sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 2 }}
     >
       <StatCard
+        to={props.needsAttentionCount > 0 ? '/receipts?tab=attention' : '/receipts'}
         icon={<ReceiptLongRounded />}
         iconBg="#DCE6FF"
         iconColor="#1F4FA8"
@@ -71,7 +79,7 @@ export function StatCards(props: StatCardsProps) {
         hint={
           props.needsAttentionCount > 0 ? (
             <Box component="span" sx={{ color: hcColors.tertiaryStrong, fontWeight: 600 }}>
-              {props.needsAttentionCount} ждут проверки
+              {props.needsAttentionCount} ждут проверки →
             </Box>
           ) : (
             'все разобраны'
@@ -79,6 +87,7 @@ export function StatCards(props: StatCardsProps) {
         }
       />
       <StatCard
+        to="/receipts"
         icon={<SavingsRounded />}
         iconBg="#FBEFC4"
         iconColor="#7D5F00"

@@ -14,6 +14,42 @@ export function formatPurchaseTime(iso: string, now: Date = new Date()): string 
   return dayFormatter.format(date);
 }
 
+const weekdayFormatter = new Intl.DateTimeFormat('ru-RU', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+});
+const fullFormatter = new Intl.DateTimeFormat('ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+/** Заголовок группы в списке чеков: «Сегодня», «Вчера», «суббота, 11 октября». */
+export function formatDayHeading(iso: string, now: Date = new Date()): string {
+  const daysAgo = Math.round((startOfDay(now) - startOfDay(new Date(iso))) / 86_400_000);
+  if (daysAgo === 0) return 'Сегодня';
+  if (daysAgo === 1) return 'Вчера';
+  return weekdayFormatter.format(new Date(iso));
+}
+
+/** Ключ дня для группировки по локальной дате пользователя. */
+export function localDayKey(iso: string): number {
+  return startOfDay(new Date(iso));
+}
+
+/** «14:02». */
+export function formatTime(iso: string): string {
+  return timeFormatter.format(new Date(iso));
+}
+
+/** «13 октября 2026 г. в 14:02» — для карточки чека. */
+export function formatDateTime(iso: string): string {
+  return fullFormatter.format(new Date(iso));
+}
+
 /** «2026-10-11» → 11 (день месяца для подписи столбика). */
 export function dayOfMonth(isoDate: string): number {
   return Number(isoDate.slice(8, 10));

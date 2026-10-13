@@ -5,6 +5,8 @@ import { RegisterPage } from './features/auth/RegisterPage';
 import { RequireAuth } from './features/auth/RequireAuth';
 import { useCurrentUser } from './features/auth/useCurrentUser';
 import { DashboardPage } from './features/dashboard/DashboardPage';
+import { ReceiptPage } from './features/receipts/ReceiptPage';
+import { ReceiptsPage } from './features/receipts/ReceiptsPage';
 import { SettingsPage } from './features/settings/SettingsPage';
 import { AppShell } from './layout/AppShell';
 
@@ -46,6 +48,8 @@ export function App() {
       />
       <Route element={<PrivateLayout />}>
         <Route index element={<DashboardPage />} />
+        <Route path="receipts" element={<ReceiptsPage />} />
+        <Route path="receipts/:id" element={<ReceiptPage />} />
         <Route path="settings" element={<SettingsPage />} />
         {/* Разделов, которых ещё нет, не показываем: неизвестный адрес ведёт на дашборд. */}
         <Route path="*" element={<Navigate to="/" replace />} />

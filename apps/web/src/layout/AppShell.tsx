@@ -1,5 +1,6 @@
 import AutoAwesomeRounded from '@mui/icons-material/AutoAwesomeRounded';
 import DashboardRounded from '@mui/icons-material/DashboardRounded';
+import ReceiptLongRounded from '@mui/icons-material/ReceiptLongRounded';
 import SettingsRounded from '@mui/icons-material/SettingsRounded';
 import type { SvgIconComponent } from '@mui/icons-material';
 import Box from '@mui/material/Box';
@@ -19,6 +20,7 @@ interface NavItem {
 /** Только готовые разделы: новые пункты появляются вместе с экранами. */
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Дашборд', icon: DashboardRounded },
+  { to: '/receipts', label: 'Чеки', icon: ReceiptLongRounded },
   { to: '/settings', label: 'Настройки', icon: SettingsRounded },
 ];
 
@@ -29,7 +31,8 @@ function DrawerLink({ item }: { item: NavItem }) {
     <Box
       component={NavLink}
       to={item.to}
-      end
+      // «Чеки» подсвечены и в карточке чека; «Дашборд» — только на главной.
+      end={item.to === '/'}
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -63,7 +66,8 @@ function BarLink({ item }: { item: NavItem }) {
     <Box
       component={NavLink}
       to={item.to}
-      end
+      // «Чеки» подсвечены и в карточке чека; «Дашборд» — только на главной.
+      end={item.to === '/'}
       sx={{
         flex: 1,
         display: 'flex',
