@@ -107,7 +107,7 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }} aria-busy>
         {[0, 1, 2].map((i) => (
-          <Skeleton key={i} variant="rounded" height={72} sx={{ borderRadius: 5 }} />
+          <Skeleton key={i} variant="rounded" height={72} sx={{ borderRadius: 3 }} />
         ))}
       </Box>
     );
@@ -117,7 +117,7 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
       <Alert
         severity="error"
         action={<Button onClick={() => receipts.refetch()}>Повторить</Button>}
-        sx={{ borderRadius: 4 }}
+        sx={{ borderRadius: 3 }}
       >
         Не удалось загрузить чеки.
       </Alert>
@@ -131,7 +131,7 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
       <Box
         sx={{
           bgcolor: 'background.paper',
-          borderRadius: 7,
+          borderRadius: 4,
           py: 6,
           px: 3,
           display: 'flex',
@@ -163,7 +163,7 @@ function ReceiptList({ q, category }: { q: string; category: CategoryKey | null 
         <Box
           key={group.key}
           component="section"
-          sx={{ bgcolor: 'background.paper', borderRadius: 7, p: { xs: 1.5, sm: 2 } }}
+          sx={{ bgcolor: 'background.paper', borderRadius: 4, p: { xs: 1.5, sm: 2 } }}
         >
           <Typography
             component="h2"
@@ -251,7 +251,7 @@ export function ReceiptsPage() {
                     <SearchRounded />
                   </InputAdornment>
                 ),
-                sx: { borderRadius: 7, bgcolor: 'background.paper' },
+                sx: { borderRadius: 4, bgcolor: 'background.paper' },
               },
             }}
           />

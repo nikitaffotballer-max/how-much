@@ -84,7 +84,7 @@ export function MailAccountCard({
       component="article"
       sx={{
         bgcolor: 'background.paper',
-        borderRadius: 6,
+        borderRadius: 4,
         p: { xs: 2, sm: 2.5 },
         display: 'flex',
         flexDirection: 'column',
@@ -126,7 +126,7 @@ export function MailAccountCard({
       <Dialog
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        slotProps={{ paper: { sx: { borderRadius: 7 } } }}
+        slotProps={{ paper: { sx: { borderRadius: 4 } } }}
       >
         <DialogTitle>Отключить {account.login}?</DialogTitle>
         <DialogContent>

@@ -13,7 +13,7 @@ export function RecentPurchases({ recent }: Pick<DashboardSummary, 'recent'>) {
       aria-labelledby="recent-title"
       sx={{
         bgcolor: '#FFFFFF',
-        borderRadius: 7,
+        borderRadius: 4,
         p: 3,
         display: 'flex',
         flexDirection: 'column',

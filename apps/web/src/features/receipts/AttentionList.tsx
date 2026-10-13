@@ -20,10 +20,10 @@ export function AttentionList() {
   const retry = useMutation({ mutationFn: hcApi.retryAttentionEmail, onSuccess: refresh });
   const dismiss = useMutation({ mutationFn: hcApi.dismissAttentionEmail, onSuccess: refresh });
 
-  if (emails.isPending) return <Skeleton variant="rounded" height={120} sx={{ borderRadius: 6 }} />;
+  if (emails.isPending) return <Skeleton variant="rounded" height={120} sx={{ borderRadius: 4 }} />;
   if (emails.isError) {
     return (
-      <Alert severity="error" sx={{ borderRadius: 4 }}>
+      <Alert severity="error" sx={{ borderRadius: 3 }}>
         Не удалось загрузить письма.
       </Alert>
     );
@@ -44,7 +44,7 @@ export function AttentionList() {
           component="article"
           sx={{
             bgcolor: 'background.paper',
-            borderRadius: 6,
+            borderRadius: 4,
             p: 2.5,
             display: 'flex',
             gap: 2,

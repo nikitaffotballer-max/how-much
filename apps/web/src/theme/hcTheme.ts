@@ -34,7 +34,8 @@ export const hcTheme = createTheme({
     text: { primary: hcColors.onSurface, secondary: hcColors.onSurfaceVariant },
     divider: hcColors.outlineVariant,
   },
-  shape: { borderRadius: 12 },
+  // Базовая единица скругления: в sx borderRadius: 3 → 12 px, 4 → 16 px.
+  shape: { borderRadius: 4 },
   typography: {
     fontFamily: "'Onest', system-ui, sans-serif",
     h1: { fontSize: 28, fontWeight: 700, letterSpacing: '-0.01em' },
@@ -47,14 +48,14 @@ export const hcTheme = createTheme({
     },
     MuiCard: {
       defaultProps: { elevation: 0 },
-      styleOverrides: { root: { borderRadius: 24 } },
+      styleOverrides: { root: { borderRadius: 16 } },
     },
     MuiButton: {
       defaultProps: { disableElevation: true },
-      styleOverrides: { root: { borderRadius: 20, minHeight: 40, paddingInline: 20 } },
+      styleOverrides: { root: { borderRadius: 12, minHeight: 40, paddingInline: 20 } },
     },
     MuiChip: {
-      styleOverrides: { root: { borderRadius: 10, fontWeight: 500 } },
+      styleOverrides: { root: { borderRadius: 8, fontWeight: 500 } },
     },
   },
 });

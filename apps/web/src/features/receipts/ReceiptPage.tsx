@@ -45,7 +45,7 @@ function ReceiptHeader({ receipt }: { receipt: ReceiptDetail }) {
       sx={{
         bgcolor: meta.container,
         color: meta.onContainer,
-        borderRadius: 7,
+        borderRadius: 4,
         p: { xs: 2.5, md: 3.5 },
         display: 'flex',
         alignItems: 'center',
@@ -119,7 +119,7 @@ function CategoryPicker({
         anchorEl={anchor}
         open={Boolean(anchor)}
         onClose={() => setAnchor(null)}
-        slotProps={{ paper: { sx: { borderRadius: 4, maxHeight: 420 } } }}
+        slotProps={{ paper: { sx: { borderRadius: 3, maxHeight: 420 } } }}
       >
         {groups.flatMap((group) => [
           <ListSubheader key={`${group.key}-header`} sx={{ lineHeight: '36px' }}>
@@ -159,7 +159,7 @@ function ItemsList({ receipt }: { receipt: ReceiptDetail }) {
     <Box
       component="section"
       aria-labelledby="items-title"
-      sx={{ bgcolor: 'background.paper', borderRadius: 7, p: { xs: 2, md: 3 } }}
+      sx={{ bgcolor: 'background.paper', borderRadius: 4, p: { xs: 2, md: 3 } }}
     >
       <Typography variant="h2" id="items-title" sx={{ px: 1, pb: 1 }}>
         Покупки · {receipt.items.length}
@@ -228,8 +228,8 @@ export function ReceiptPage() {
 
       {receipt.isPending && (
         <>
-          <Skeleton variant="rounded" height={140} sx={{ borderRadius: 7 }} />
-          <Skeleton variant="rounded" height={280} sx={{ borderRadius: 7 }} />
+          <Skeleton variant="rounded" height={140} sx={{ borderRadius: 4 }} />
+          <Skeleton variant="rounded" height={280} sx={{ borderRadius: 4 }} />
         </>
       )}
 
@@ -241,7 +241,7 @@ export function ReceiptPage() {
               К списку
             </Button>
           }
-          sx={{ borderRadius: 4 }}
+          sx={{ borderRadius: 3 }}
         >
           Чек не найден или не загрузился.
         </Alert>

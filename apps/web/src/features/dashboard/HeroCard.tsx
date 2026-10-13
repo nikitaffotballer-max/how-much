@@ -21,7 +21,7 @@ export function HeroCard({ total, previousTotal }: HeroCardProps) {
       aria-labelledby="hero-total"
       sx={{
         bgcolor: hcColors.heroContainer,
-        borderRadius: 7,
+        borderRadius: 4,
         px: { xs: 3, md: 4.5 },
         py: 4,
         display: 'flex',
@@ -56,7 +56,7 @@ export function HeroCard({ total, previousTotal }: HeroCardProps) {
               gap: 0.75,
               minHeight: 32,
               px: 1.5,
-              borderRadius: 4,
+              borderRadius: 3,
               bgcolor: '#FFFFFF',
               color: spentLess ? '#00513A' : hcColors.tertiaryStrong,
               fontSize: 14,

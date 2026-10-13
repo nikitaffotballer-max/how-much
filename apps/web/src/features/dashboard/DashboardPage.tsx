@@ -18,9 +18,9 @@ const monthFormatter = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
 function DashboardSkeleton() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }} aria-busy>
-      <Skeleton variant="rounded" height={220} sx={{ borderRadius: 7 }} />
-      <Skeleton variant="rounded" height={96} sx={{ borderRadius: 6 }} />
-      <Skeleton variant="rounded" height={320} sx={{ borderRadius: 7 }} />
+      <Skeleton variant="rounded" height={220} sx={{ borderRadius: 4 }} />
+      <Skeleton variant="rounded" height={96} sx={{ borderRadius: 4 }} />
+      <Skeleton variant="rounded" height={320} sx={{ borderRadius: 4 }} />
     </Box>
   );
 }
@@ -39,7 +39,7 @@ export function DashboardPage() {
         <Alert
           severity="error"
           action={<Button onClick={() => summary.refetch()}>Повторить</Button>}
-          sx={{ borderRadius: 4 }}
+          sx={{ borderRadius: 3 }}
         >
           Не удалось загрузить данные. Проверьте, что API запущен (pnpm dev).
         </Alert>

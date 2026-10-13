@@ -26,7 +26,7 @@ function StatCard({ icon, iconBg, iconColor, label, value, hint, to }: StatCardP
         bgcolor: '#FFFFFF',
         color: 'text.primary',
         textDecoration: 'none',
-        borderRadius: 6,
+        borderRadius: 4,
         p: 2.5,
         display: 'flex',
         alignItems: 'center',

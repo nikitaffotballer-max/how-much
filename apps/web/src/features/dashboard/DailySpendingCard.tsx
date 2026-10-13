@@ -19,7 +19,7 @@ export function DailySpendingCard({ byDay }: Pick<DashboardSummary, 'byDay'>) {
         flex: '2 1 460px',
         minWidth: 0,
         bgcolor: '#FFFFFF',
-        borderRadius: 7,
+        borderRadius: 4,
         p: 3,
         display: 'flex',
         flexDirection: 'column',

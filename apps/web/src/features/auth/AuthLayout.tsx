@@ -123,7 +123,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
             gridArea: 'form',
             alignSelf: 'center',
             bgcolor: 'background.paper',
-            borderRadius: 7,
+            borderRadius: 4,
             p: { xs: 3, md: 5 },
             boxShadow: '0 1px 3px rgba(0, 33, 20, 0.08), 0 8px 24px rgba(0, 33, 20, 0.06)',
           }}

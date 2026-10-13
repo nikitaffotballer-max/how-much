@@ -11,7 +11,7 @@ export function EmptyDashboard() {
       component="section"
       sx={{
         bgcolor: '#FFFFFF',
-        borderRadius: 7,
+        borderRadius: 4,
         px: 3,
         py: 6,
         display: 'flex',

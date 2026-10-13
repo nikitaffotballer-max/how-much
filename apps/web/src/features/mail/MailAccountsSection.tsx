@@ -28,7 +28,7 @@ function ReceiptTip() {
         display: 'flex',
         gap: 2,
         p: 2.5,
-        borderRadius: 6,
+        borderRadius: 4,
         bgcolor: hcColors.tertiaryContainer,
         color: hcColors.onTertiaryContainer,
       }}
@@ -110,13 +110,13 @@ export function MailAccountsSection() {
         )}
       </Box>
 
-      {accounts.isPending && <Skeleton variant="rounded" height={88} sx={{ borderRadius: 6 }} />}
+      {accounts.isPending && <Skeleton variant="rounded" height={88} sx={{ borderRadius: 4 }} />}
 
       {accounts.isError && (
         <Alert
           severity="error"
           action={<Button onClick={() => accounts.refetch()}>Повторить</Button>}
-          sx={{ borderRadius: 4 }}
+          sx={{ borderRadius: 3 }}
         >
           Не удалось загрузить почтовые ящики.
         </Alert>

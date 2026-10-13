@@ -45,7 +45,7 @@ export function ReceiptRow({ receipt, caption }: ReceiptRowProps) {
         gap: 2,
         minHeight: 72,
         px: 1.5,
-        borderRadius: 5,
+        borderRadius: 3,
         color: 'text.primary',
         textDecoration: 'none',
         '&:hover': { bgcolor: hcColors.background },

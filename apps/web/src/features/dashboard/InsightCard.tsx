@@ -22,7 +22,7 @@ export function InsightCard({ byCategory }: Pick<DashboardSummary, 'byCategory'>
         minWidth: 0,
         bgcolor: hcColors.insightContainer,
         color: hcColors.onInsightContainer,
-        borderRadius: 7,
+        borderRadius: 4,
         p: 3,
         display: 'flex',
         flexDirection: 'column',

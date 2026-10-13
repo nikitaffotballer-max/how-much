@@ -42,7 +42,7 @@ export function CategoryGrid({ byCategory, total }: CategoryGridProps) {
               key={category}
               sx={{
                 bgcolor: '#FFFFFF',
-                borderRadius: 6,
+                borderRadius: 4,
                 p: 2.25,
                 display: 'flex',
                 flexDirection: 'column',

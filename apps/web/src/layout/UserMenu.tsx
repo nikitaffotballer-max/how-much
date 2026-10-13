@@ -42,7 +42,7 @@ export function UserMenu() {
         onClose={() => setAnchor(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ paper: { sx: { borderRadius: 4, minWidth: 240 } } }}
+        slotProps={{ paper: { sx: { borderRadius: 3, minWidth: 240 } } }}
       >
         <Box sx={{ px: 2, py: 1.5 }}>
           <Box sx={{ fontSize: 13, color: 'text.secondary' }}>Вы вошли как</Box>

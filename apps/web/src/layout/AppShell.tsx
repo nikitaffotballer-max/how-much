@@ -40,7 +40,7 @@ function DrawerLink({ item }: { item: NavItem }) {
         minHeight: 56,
         pl: 2,
         pr: 2.5,
-        borderRadius: 7,
+        borderRadius: 4,
         color: hcColors.onSurfaceVariant,
         textDecoration: 'none',
         fontWeight: 500,
@@ -82,7 +82,7 @@ function BarLink({ item }: { item: NavItem }) {
         '& .indicator': {
           width: 64,
           height: 32,
-          borderRadius: 4,
+          borderRadius: 3,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -110,7 +110,7 @@ function ProTrialCard() {
       sx={{
         mt: 'auto',
         p: 2.5,
-        borderRadius: 6,
+        borderRadius: 4,
         bgcolor: hcColors.tertiaryContainer,
         color: hcColors.onTertiaryContainer,
         display: 'flex',
