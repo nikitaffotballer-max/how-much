@@ -100,3 +100,21 @@ export const attentionEmailSchema = z.object({
 export type AttentionEmail = z.infer<typeof attentionEmailSchema>;
 
 export const attentionEmailListSchema = z.array(attentionEmailSchema);
+
+/** Тело POST /api/v1/receipts: трата наличными, которой нет в почте. */
+export const createCashReceiptSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, { error: 'Напишите, что купили' })
+    .max(80, { error: 'Слишком длинное описание' }),
+  amount: z
+    .number()
+    .int()
+    .positive({ error: 'Сумма должна быть больше нуля' })
+    .max(100_000_000, { error: 'Слишком большая сумма' }),
+  purchasedAt: z.iso.datetime({ offset: true }),
+  categoryKey: z.string().min(1, { error: 'Выберите категорию' }),
+});
+
+export type CreateCashReceipt = z.infer<typeof createCashReceiptSchema>;

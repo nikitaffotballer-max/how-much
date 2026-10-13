@@ -239,3 +239,63 @@ describe('Требуют внимания', () => {
     expect(await list(me.token)).toEqual([]);
   });
 });
+
+describe('Наличные и удаление', () => {
+  it('добавляет трату наличными в выбранную категорию и удаляет её', async () => {
+    const me = await registerTestUser(app);
+    const stranger = await registerTestUser(app);
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/v1/receipts',
+      payload: {
+        title: 'Рынок, овощи',
+        amount: 125_050,
+        purchasedAt: '2026-10-13T09:30:00+03:00',
+        categoryKey: 'groceries.produce',
+      },
+      ...auth(me.token),
+    });
+
+    expect(res.statusCode).toBe(201);
+    const receipt = receiptDetailSchema.parse(res.json());
+    expect(receipt).toMatchObject({
+      source: 'cash',
+      total: 125_050,
+      category: 'groceries',
+      merchant: { name: 'Рынок, овощи' },
+      purchasedAt: '2026-10-13T06:30:00.000Z',
+    });
+    expect((await listReceipts(me.token)).items[0]).toMatchObject({
+      id: receipt.id,
+      itemsPreview: 'наличные',
+    });
+
+    const remove = (token: string) =>
+      app.inject({ method: 'DELETE', url: `/api/v1/receipts/${receipt.id}`, ...auth(token) });
+    expect((await remove(stranger.token)).statusCode).toBe(404);
+    expect((await remove(me.token)).statusCode).toBe(204);
+    expect((await listReceipts(me.token)).items).toEqual([]);
+  });
+
+  it('проверяет сумму и категорию', async () => {
+    const me = await registerTestUser(app);
+    const post = (payload: Record<string, unknown>) =>
+      app.inject({
+        method: 'POST',
+        url: '/api/v1/receipts',
+        payload: {
+          title: 'Кофе',
+          amount: 25_000,
+          purchasedAt: new Date().toISOString(),
+          categoryKey: 'cafe',
+          ...payload,
+        },
+        ...auth(me.token),
+      });
+
+    expect((await post({ amount: 0 })).statusCode).toBe(400);
+    expect((await post({ categoryKey: 'nope' })).json()).toMatchObject({
+      code: 'unknown_category',
+    });
+  });
+});

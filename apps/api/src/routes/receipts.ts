@@ -2,6 +2,7 @@ import type { Prisma } from '@how-much/db';
 import {
   attentionEmailListSchema,
   categoryListSchema,
+  createCashReceiptSchema,
   receiptDetailSchema,
   receiptListQuerySchema,
   receiptListSchema,
@@ -173,6 +174,52 @@ export const receiptRoutes =
       });
       if (!receipt) throw receiptNotFound();
       return receiptDetailSchema.parse(toReceiptDetail(receipt));
+    });
+
+    /**
+     * Трата наличными. Храним как чек с одной позицией в выбранной категории —
+     * так её без доработок учитывают дашборд, фильтры и поиск.
+     */
+    app.post('/receipts', async (request, reply) => {
+      const userId = requireUserId(request);
+      const { title, amount, purchasedAt, categoryKey } = createCashReceiptSchema.parse(
+        request.body,
+      );
+      const category = await app.db.category.findUnique({ where: { key: categoryKey } });
+      if (!category) throw new HCHttpError(400, 'unknown_category', 'Такой категории нет');
+
+      const receipt = await app.db.receipt.create({
+        data: {
+          userId,
+          purchasedAt: new Date(purchasedAt),
+          totalKopecks: amount,
+          paymentType: 'cash',
+          source: 'cash',
+          note: title,
+          items: {
+            create: {
+              position: 0,
+              rawName: title,
+              quantity: 1,
+              priceKopecks: amount,
+              sumKopecks: amount,
+              categoryId: category.id,
+              categorySource: 'user',
+            },
+          },
+        },
+        include: receiptWithItems,
+      });
+      return reply.status(201).send(receiptDetailSchema.parse(toReceiptDetail(receipt)));
+    });
+
+    /** Удалить чек: ошибочную трату наличными или чек, который не нужен в статистике. */
+    app.delete('/receipts/:id', async (request, reply) => {
+      const userId = requireUserId(request);
+      const { id } = idParamsSchema.parse(request.params);
+      const { count } = await app.db.receipt.deleteMany({ where: { id, userId } });
+      if (count === 0) throw receiptNotFound();
+      return reply.status(204).send();
     });
 
     app.get('/categories', async (request) => {

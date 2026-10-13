@@ -1,7 +1,8 @@
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { buildApp, type AppDeps } from '../app.js';
-import { SESSION_COOKIE } from '../auth/session.js';
+import { hashPassword } from '../auth/password.js';
+import { createSession, SESSION_COOKIE } from '../auth/session.js';
 import { loadConfig } from '../config.js';
 import type { MailGateway } from '../mail/mailGateway.js';
 
@@ -60,12 +61,27 @@ export function sessionCookie(res: LightMyRequestResponse): string {
   return cookie.value;
 }
 
-/** Регистрирует нового пользователя и возвращает его id и токен сессии. */
+/** argon2 медленный нарочно — хешируем тестовый пароль один раз на файл. */
+let testPasswordHash: Promise<string> | undefined;
+
+/**
+ * Пользователь как после регистрации (с пробным Pro) и его сессия. Создаём прямо в базе:
+ * у /auth/register лимит 10 попыток в минуту, а сама регистрация проверяется в auth.test.ts.
+ */
 export async function registerTestUser(app: FastifyInstance, email = uniqueTestEmail()) {
-  const res = await app.inject({
-    method: 'POST',
-    url: '/api/v1/auth/register',
-    payload: { email, password: TEST_PASSWORD },
+  testPasswordHash ??= hashPassword(TEST_PASSWORD);
+  const user = await app.db.user.create({
+    data: {
+      email,
+      passwordHash: await testPasswordHash,
+      subscription: {
+        create: {
+          status: 'trialing',
+          currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        },
+      },
+    },
   });
-  return { id: (res.json() as { id: string }).id, email, token: sessionCookie(res) };
+  const token = await createSession(app.db, user.id, 'vitest');
+  return { id: user.id, email, token };
 }
