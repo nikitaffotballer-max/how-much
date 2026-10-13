@@ -4,7 +4,8 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import { afterAll, describe, expect, it } from 'vitest';
 import { RAW_EMAIL_TTL_MS, syncMailAccount, type FetchEmails } from './syncMailAccount.js';
 
-const TEST_EMAIL_DOMAIN = 'test.how-much.local';
+// Свой домен: тесты API идут параллельно и удаляют пользователей @test.how-much.local.
+const TEST_EMAIL_DOMAIN = 'worker.test.how-much.local';
 const db = createPrismaClient(process.env.DATABASE_URL ?? '');
 const encryptionKey = randomBytes(32);
 const now = new Date('2026-10-13T12:00:00Z');

@@ -8,7 +8,8 @@ import type { ExtractedReceipt } from './extractReceipt.js';
 import { EXTRACTED_RECEIPT } from './fixtures/extractedReceipt.js';
 import { parseRawEmail } from './parseRawEmail.js';
 
-const TEST_EMAIL_DOMAIN = 'test.how-much.local';
+// Свой домен: тесты API идут параллельно и удаляют пользователей @test.how-much.local.
+const TEST_EMAIL_DOMAIN = 'worker.test.how-much.local';
 const db = createPrismaClient(process.env.DATABASE_URL ?? '');
 const html = readFileSync(new URL('./fixtures/ofd-receipt.html', import.meta.url), 'utf8');
 
