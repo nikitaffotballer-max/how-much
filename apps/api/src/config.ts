@@ -6,6 +6,7 @@ const envSchema = z.object({
   /** Локально слушаем только свой компьютер; в Docker/на сервере задаём 0.0.0.0. */
   API_HOST: z.string().default('127.0.0.1'),
   WEB_ORIGIN: z.url().default('http://localhost:5173'),
+  DATABASE_URL: z.string().min(1, { error: 'DATABASE_URL обязателен' }),
 });
 
 export type Config = z.infer<typeof envSchema>;

@@ -53,7 +53,7 @@
 ### 3.1. Авторизация
 
 - Регистрация и вход по email и паролю, подтверждение email.
-- Сессии на httpOnly-cookie (access + refresh), выход со всех устройств.
+- Сессия — непрозрачный токен в httpOnly-cookie (SameSite=Lax, 30 дней, продлевается при использовании); в базе хранится только SHA-256 токена. Выход удаляет сессию сразу.
 - Сброс пароля по ссылке на почту.
 - Удаление аккаунта вместе со всеми данными.
 
@@ -230,7 +230,7 @@ packages/db     — схема Prisma и миграции
 | Сущность                 | Ключевые поля                                                                                                    | Связи                                |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `User`                   | email, passwordHash, emailVerifiedAt, plan, createdAt                                                            | → всё остальное                      |
-| `Session`                | refreshTokenHash, userAgent, expiresAt                                                                           | User 1—N                             |
+| `Session`                | tokenHash, userAgent, lastUsedAt, expiresAt                                                                      | User 1—N                             |
 | `MailAccount`            | provider, login, encryptedPassword, status, lastSyncAt, lastUid                                                  | User 1—N                             |
 | `RawEmail`               | messageId, from, subject, receivedAt, html, parseStatus, deleteAfter                                             | MailAccount 1—N                      |
 | `Merchant`               | inn, name, displayName, defaultCategoryId                                                                        | общий справочник                     |
@@ -322,8 +322,9 @@ REST + JSON с префиксом `/api/v1`. Схемы запросов и от
 
 ### Этап 1. Основа (2 недели)
 
-- [ ] Монорепозиторий, Docker Compose (Postgres, Redis), CI
-- [ ] Регистрация, вход, сессии
+- [x] Монорепозиторий, Docker Compose (Postgres, Redis), CI
+- [x] Регистрация, вход, сессии — API (argon2id, rate limit 10/мин, 14 дней Pro при регистрации)
+- [ ] Экраны регистрации и входа во фронтенде
 - [ ] Подключение почты по IMAP, первичный импорт и синхронизация по расписанию
 - [ ] Парсеры 3 форматов с тестами на собранных письмах
 - [ ] Список чеков и карточка чека во фронтенде

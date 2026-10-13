@@ -1,0 +1,359 @@
+// Схема базы «Хау мач». Описание сущностей — docs/TZ.md, раздел 7.
+// Деньги — в копейках (Int), время — в UTC (DateTime хранится как timestamp(3)).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Пользователи и доступ ----------
+
+model User {
+  id              String    @id @default(uuid(7))
+  email           String    @unique
+  passwordHash    String
+  emailVerifiedAt DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  sessions          Session[]
+  mailAccounts      MailAccount[]
+  receipts          Receipt[]
+  categoryOverrides UserCategoryOverride[]
+  bankTransactions  BankTransaction[]
+  budgets           Budget[]
+  subscription      Subscription?
+  telegramLink      TelegramLink?
+
+  @@map("users")
+}
+
+model Session {
+  id         String   @id @default(uuid(7))
+  userId     String
+  /// В базе только SHA-256 токена сессии: утечка таблицы не даёт войти в чужой аккаунт.
+  tokenHash  String   @unique
+  userAgent  String?
+  lastUsedAt DateTime @default(now())
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// ---------- Почта и исходные письма ----------
+
+enum MailProvider {
+  yandex
+  mailru
+  gmail
+}
+
+enum MailAccountStatus {
+  active
+  auth_failed
+  disabled
+}
+
+model MailAccount {
+  id                String            @id @default(uuid(7))
+  userId            String
+  provider          MailProvider
+  login             String
+  /// Пароль приложения, зашифрованный AES-256-GCM; ключ только в переменной окружения.
+  encryptedPassword String
+  status            MailAccountStatus @default(active)
+  lastSyncAt        DateTime?
+  /// UID последнего прочитанного письма в IMAP — чтобы не перечитывать ящик целиком.
+  lastUid           Int?
+  createdAt         DateTime          @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rawEmails RawEmail[]
+
+  @@unique([userId, login])
+  @@map("mail_accounts")
+}
+
+enum ParseStatus {
+  pending
+  parsed
+  failed
+  ignored
+}
+
+model RawEmail {
+  id            String      @id @default(uuid(7))
+  mailAccountId String
+  messageId     String
+  fromAddress   String
+  subject       String
+  receivedAt    DateTime
+  html          String
+  parseStatus   ParseStatus @default(pending)
+  parseError    String?
+  /// Исходник храним 30 дней для переразбора, потом удаляем (ТЗ, 3.3).
+  deleteAfter   DateTime
+
+  mailAccount MailAccount @relation(fields: [mailAccountId], references: [id], onDelete: Cascade)
+  receipt     Receipt?
+
+  @@unique([mailAccountId, messageId])
+  @@index([deleteAfter])
+  @@map("raw_emails")
+}
+
+// ---------- Справочники ----------
+
+model Category {
+  id       String  @id @default(uuid(7))
+  /// Стабильный ключ: «groceries», «groceries.dairy». Верхний уровень совпадает с HC_CATEGORY_KEYS.
+  key      String  @unique
+  name     String
+  parentId String?
+
+  parent    Category?              @relation("CategoryTree", fields: [parentId], references: [id])
+  children  Category[]             @relation("CategoryTree")
+  items     ReceiptItem[]
+  merchants Merchant[]
+  overrides UserCategoryOverride[]
+  budgets   Budget[]
+
+  @@map("categories")
+}
+
+model Merchant {
+  id                String  @id @default(uuid(7))
+  inn               String? @unique
+  name              String
+  displayName       String
+  defaultCategoryId String?
+
+  defaultCategory Category?              @relation(fields: [defaultCategoryId], references: [id])
+  receipts        Receipt[]
+  overrides       UserCategoryOverride[]
+
+  @@map("merchants")
+}
+
+enum ProductUnit {
+  kg
+  l
+  pcs
+}
+
+model Product {
+  id             String       @id @default(uuid(7))
+  /// «Молоко Простоквашино 3,2%, 930 г»
+  normalizedName String       @unique
+  /// «Молоко» — по нему сравниваем цены и считаем личную инфляцию.
+  baseName       String
+  unit           ProductUnit?
+  unitSize       Decimal?     @db.Decimal(12, 3)
+
+  items     ReceiptItem[]
+  overrides UserCategoryOverride[]
+
+  @@index([baseName])
+  @@map("products")
+}
+
+/// Кэш ответов LLM: одинаковые строки чеков не отправляем в модель повторно.
+model ItemNormalizationCache {
+  rawNameHash String   @id
+  productId   String
+  categoryId  String?
+  model       String
+  createdAt   DateTime @default(now())
+
+  @@map("item_normalization_cache")
+}
+
+// ---------- Чеки ----------
+
+enum ReceiptSource {
+  email
+  cash
+  manual
+}
+
+enum CategorySource {
+  merchant
+  llm
+  user
+}
+
+model Receipt {
+  id           String        @id @default(uuid(7))
+  userId       String
+  merchantId   String?
+  rawEmailId   String?       @unique
+  purchasedAt  DateTime
+  totalKopecks Int
+  paymentType  String?
+  /// Фискальные реквизиты: номер накопителя, документа и признак. По ним отсекаем дубли.
+  fn           String?
+  fd           String?
+  fpd          String?
+  source       ReceiptSource
+  note         String?
+  createdAt    DateTime      @default(now())
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchant        Merchant?        @relation(fields: [merchantId], references: [id])
+  rawEmail        RawEmail?        @relation(fields: [rawEmailId], references: [id], onDelete: SetNull)
+  items           ReceiptItem[]
+  bankTransaction BankTransaction?
+
+  @@unique([userId, fn, fd])
+  @@index([userId, purchasedAt])
+  @@map("receipts")
+}
+
+model ReceiptItem {
+  id             String          @id @default(uuid(7))
+  receiptId      String
+  /// Порядок строки в чеке.
+  position       Int
+  rawName        String
+  quantity       Decimal         @db.Decimal(12, 3)
+  priceKopecks   Int
+  sumKopecks     Int
+  productId      String?
+  categoryId     String?
+  categorySource CategorySource?
+
+  receipt  Receipt   @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  product  Product?  @relation(fields: [productId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  @@unique([receiptId, position])
+  @@index([productId])
+  @@map("receipt_items")
+}
+
+/// Ручная правка категории: действует на все будущие покупки этого товара или магазина.
+model UserCategoryOverride {
+  id         String  @id @default(uuid(7))
+  userId     String
+  productId  String?
+  merchantId String?
+  categoryId String
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  Product?  @relation(fields: [productId], references: [id])
+  merchant Merchant? @relation(fields: [merchantId], references: [id])
+  category Category  @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, productId])
+  @@unique([userId, merchantId])
+  @@map("user_category_overrides")
+}
+
+model BankTransaction {
+  id            String   @id @default(uuid(7))
+  userId        String
+  cardLabel     String
+  bookedAt      DateTime
+  amountKopecks Int
+  description   String
+  receiptId     String?  @unique
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  receipt Receipt? @relation(fields: [receiptId], references: [id], onDelete: SetNull)
+
+  @@index([userId, bookedAt])
+  @@map("bank_transactions")
+}
+
+// ---------- Бюджеты, подписка, интеграции ----------
+
+model Budget {
+  id           String  @id @default(uuid(7))
+  userId       String
+  /// null — общий бюджет на все траты.
+  categoryId   String?
+  limitKopecks Int
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, categoryId])
+  @@map("budgets")
+}
+
+enum SubscriptionStatus {
+  trialing
+  active
+  past_due
+  canceled
+  expired
+}
+
+model Subscription {
+  id                String             @id @default(uuid(7))
+  userId            String             @unique
+  status            SubscriptionStatus
+  currentPeriodEnd  DateTime
+  paymentMethodId   String?
+  cancelAtPeriodEnd Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@map("subscriptions")
+}
+
+enum PaymentStatus {
+  pending
+  succeeded
+  canceled
+}
+
+model Payment {
+  id                String        @id @default(uuid(7))
+  subscriptionId    String
+  providerPaymentId String        @unique
+  amountKopecks     Int
+  status            PaymentStatus
+  idempotencyKey    String        @unique
+  createdAt         DateTime      @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+/// Журнал входящих вебхуков: повторная доставка того же события ничего не меняет.
+model WebhookEvent {
+  id          String    @id @default(uuid(7))
+  provider    String
+  eventId     String
+  type        String
+  payload     Json
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([provider, eventId])
+  @@map("webhook_events")
+}
+
+model TelegramLink {
+  id       String   @id @default(uuid(7))
+  userId   String   @unique
+  chatId   BigInt   @unique
+  linkedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("telegram_links")
+}

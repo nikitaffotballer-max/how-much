@@ -1,9 +1,8 @@
 import { dashboardSummarySchema } from '@how-much/shared';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { buildApp } from './app.js';
-import { loadConfig } from './config.js';
+import { buildTestApp } from './test/testApp.js';
 
-const app = await buildApp(loadConfig({ NODE_ENV: 'test' }));
+const app = await buildTestApp();
 
 beforeAll(() => app.ready());
 afterAll(() => app.close());
@@ -23,8 +22,9 @@ describe('API', () => {
     expect(categoriesSum).toBe(summary.total);
   });
 
-  it('неизвестный маршрут — 404', async () => {
+  it('неизвестный маршрут — 404 в едином формате ошибок', async () => {
     const res = await app.inject({ method: 'GET', url: '/api/v1/nope' });
     expect(res.statusCode).toBe(404);
+    expect(res.json()).toMatchObject({ code: 'not_found' });
   });
 });

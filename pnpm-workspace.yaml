@@ -5,5 +5,8 @@ packages:
 # Пакеты, которым разрешено запускать установочные скрипты. Остальным pnpm запрещает.
 allowBuilds:
   esbuild: true
+  # Prisma скачивает движок миграций под текущую ОС.
+  prisma: true
+  '@prisma/engines': true
   # Необязательное нативное ускорение сериализации в BullMQ; без него всё работает.
   msgpackr-extract: false
