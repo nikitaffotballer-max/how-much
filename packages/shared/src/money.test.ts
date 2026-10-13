@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatRub, formatSignedPercent, NBSP, shareOf } from './money.js';
+import { formatRub, formatRubExact, formatSignedPercent, NBSP, shareOf } from './money.js';
 
 describe('formatRub', () => {
   it('переводит копейки в рубли с неразрывными пробелами', () => {
@@ -32,5 +32,13 @@ describe('shareOf', () => {
 
   it('не делит на ноль', () => {
     expect(shareOf(100, 0)).toBe(0);
+  });
+});
+
+describe('formatRubExact', () => {
+  it('показывает копейки, если они есть', () => {
+    expect(formatRubExact(60_652)).toBe(`606,52${NBSP}₽`);
+    expect(formatRubExact(1_234_505)).toBe(`12${NBSP}345,05${NBSP}₽`);
+    expect(formatRubExact(19_900)).toBe(`199${NBSP}₽`);
   });
 });

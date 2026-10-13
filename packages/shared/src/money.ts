@@ -11,6 +11,17 @@ export function formatRub(amount: Kopecks): string {
   return `${rubFormatter.format(Math.round(amount / 100))}${NBSP}₽`;
 }
 
+const exactFormatter = new Intl.NumberFormat('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+/** Точная сумма для чека: 60652 → «606,52 ₽», 19900 → «199 ₽» (нулевые копейки не пишем). */
+export function formatRubExact(amount: Kopecks): string {
+  if (amount % 100 === 0) return formatRub(amount);
+  return `${exactFormatter.format(amount / 100)}${NBSP}₽`;
+}
+
 /** -0.06 → «−6%», 0.048 → «+4,8%». Знак всегда виден, минус — типографский. */
 export function formatSignedPercent(ratio: number, fractionDigits = 0): string {
   const value = Math.abs(ratio * 100);

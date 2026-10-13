@@ -70,9 +70,7 @@ export const receiptDetailSchema = z.object({
   total: kopecks,
   source: receiptSourceSchema,
   paymentType: z.string().nullable(),
-  fiscal: z
-    .object({ fn: z.string(), fd: z.string(), fpd: z.string().nullable() })
-    .nullable(),
+  fiscal: z.object({ fn: z.string(), fd: z.string(), fpd: z.string().nullable() }).nullable(),
   items: z.array(receiptItemSchema),
 });
 
@@ -84,7 +82,9 @@ export const updateReceiptItemSchema = z.object({
 });
 
 /** Справочник категорий для выбора при правке: GET /api/v1/categories. */
-export const categoryListSchema = z.array(categoryRefSchema.extend({ parentKey: z.string().nullable() }));
+export const categoryListSchema = z.array(
+  categoryRefSchema.extend({ parentKey: z.string().nullable() }),
+);
 
 export type CategoryOption = z.infer<typeof categoryListSchema>[number];
 
