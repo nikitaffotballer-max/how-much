@@ -1,6 +1,5 @@
 import VisibilityOffRounded from '@mui/icons-material/VisibilityOffRounded';
 import VisibilityRounded from '@mui/icons-material/VisibilityRounded';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -10,7 +9,8 @@ import TextField, { type TextFieldProps } from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useMutation } from '@tanstack/react-query';
 import { useState, type Ref } from 'react';
-import { hcApi, HCApiError } from '../../api/hcApi';
+import { hcApi } from '../../api/hcApi';
+import { ServerError } from '../../components/ServerError';
 import { useFinishSignIn } from './useFinishSignIn';
 
 /** Скругление полей — как у остальных элементов в стиле Material 3. */
@@ -22,9 +22,9 @@ type FieldProps = TextFieldProps & { ref?: Ref<HTMLInputElement> };
 export function EmailField({ ref, ...props }: FieldProps) {
   return (
     <TextField
+      label="Email"
       {...props}
       inputRef={ref}
-      label="Email"
       type="email"
       autoComplete="email"
       fullWidth
@@ -37,9 +37,9 @@ export function PasswordField({ ref, ...props }: FieldProps) {
   const [visible, setVisible] = useState(false);
   return (
     <TextField
+      label="Пароль"
       {...props}
       inputRef={ref}
-      label="Пароль"
       type={visible ? 'text' : 'password'}
       fullWidth
       sx={fieldSx}
@@ -68,20 +68,6 @@ export function FormHeader({ title, subtitle }: { title: string; subtitle: strin
       <Typography variant="h1">{title}</Typography>
       <Typography color="text.secondary">{subtitle}</Typography>
     </Box>
-  );
-}
-
-/** Понятный текст ошибки: сообщение от API или общее, если сервер недоступен. */
-export function ServerError({ error }: { error: unknown }) {
-  if (!error) return null;
-  const message =
-    error instanceof HCApiError
-      ? error.message
-      : 'Не удалось связаться с сервером. Попробуйте ещё раз.';
-  return (
-    <Alert severity="error" sx={{ borderRadius: 3 }}>
-      {message}
-    </Alert>
   );
 }
 

@@ -2,10 +2,9 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
-import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
 import { hcApi } from '../../api/hcApi';
-import { UserMenu } from '../../layout/UserMenu';
+import { PageHeader } from '../../layout/PageHeader';
 import { CategoryGrid } from './CategoryGrid';
 import { DailySpendingCard } from './DailySpendingCard';
 import { EmptyDashboard } from './EmptyDashboard';
@@ -15,28 +14,6 @@ import { RecentPurchases } from './RecentPurchases';
 import { StatCards } from './StatCards';
 
 const monthFormatter = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
-
-function TopBar() {
-  const month = monthFormatter.format(new Date());
-  return (
-    <Box
-      component="header"
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 2,
-        minHeight: 64,
-      }}
-    >
-      <Box>
-        <Typography variant="h1">Привет!</Typography>
-        <Typography sx={{ fontSize: 15, color: 'text.secondary' }}>Вот как идёт {month}</Typography>
-      </Box>
-      <UserMenu />
-    </Box>
-  );
-}
 
 function DashboardSkeleton() {
   return (
@@ -54,7 +31,7 @@ export function DashboardPage() {
 
   return (
     <>
-      <TopBar />
+      <PageHeader title="Привет!" subtitle={`Вот как идёт ${monthFormatter.format(new Date())}`} />
 
       {summary.isPending && <DashboardSkeleton />}
 

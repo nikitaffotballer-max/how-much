@@ -2,6 +2,9 @@ import {
   apiErrorSchema,
   currentUserSchema,
   dashboardSummarySchema,
+  mailAccountListSchema,
+  mailAccountSchema,
+  type ConnectMailAccount,
   type Credentials,
   type CurrentUser,
   type DashboardSummary,
@@ -20,7 +23,7 @@ export class HCApiError extends Error {
 }
 
 interface RequestOptions {
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'DELETE';
   body?: unknown;
 }
 
@@ -54,7 +57,7 @@ async function request<TSchema extends z.ZodType>(
   return schema.parse(data);
 }
 
-/** Пустой ответ (204 No Content). */
+/** Пустой ответ (204 No Content, 202 Accepted). */
 const noContent = z.null();
 
 export const hcApi = {
@@ -75,4 +78,11 @@ export const hcApi = {
   logout: () => request('/auth/logout', noContent, { method: 'POST' }),
   getDashboardSummary: (): Promise<DashboardSummary> =>
     request('/analytics/summary', dashboardSummarySchema),
+  getMailAccounts: () => request('/mail-accounts', mailAccountListSchema),
+  connectMailAccount: (body: ConnectMailAccount) =>
+    request('/mail-accounts', mailAccountSchema, { method: 'POST', body }),
+  deleteMailAccount: (id: string) =>
+    request(`/mail-accounts/${id}`, noContent, { method: 'DELETE' }),
+  syncMailAccount: (id: string) =>
+    request(`/mail-accounts/${id}/sync`, noContent, { method: 'POST' }),
 };

@@ -18,3 +18,14 @@ export function formatPurchaseTime(iso: string, now: Date = new Date()): string 
 export function dayOfMonth(isoDate: string): number {
   return Number(isoDate.slice(8, 10));
 }
+
+const relativeFormatter = new Intl.RelativeTimeFormat('ru-RU', { numeric: 'auto' });
+
+/** «только что», «5 минут назад», «2 часа назад», дальше — как у покупок. */
+export function formatRelativeTime(iso: string, now: Date = new Date()): string {
+  const minutes = Math.floor((now.getTime() - new Date(iso).getTime()) / 60_000);
+  if (minutes < 1) return 'только что';
+  if (minutes < 60) return relativeFormatter.format(-minutes, 'minute');
+  if (minutes < 6 * 60) return relativeFormatter.format(-Math.floor(minutes / 60), 'hour');
+  return formatPurchaseTime(iso, now).toLowerCase();
+}

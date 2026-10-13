@@ -13,7 +13,8 @@ import { Link as RouterLink } from 'react-router';
 import { z } from 'zod';
 import { hcApi } from '../../api/hcApi';
 import { AuthLayout } from './AuthLayout';
-import { DemoSignIn, EmailField, FormHeader, PasswordField, ServerError } from './authFields';
+import { ServerError } from '../../components/ServerError';
+import { DemoSignIn, EmailField, FormHeader, PasswordField } from './authFields';
 import { useFinishSignIn } from './useFinishSignIn';
 
 /** Согласие на обработку персональных данных обязательно по 152-ФЗ (ТЗ, раздел 9). */

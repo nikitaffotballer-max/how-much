@@ -5,6 +5,7 @@ import { RegisterPage } from './features/auth/RegisterPage';
 import { RequireAuth } from './features/auth/RequireAuth';
 import { useCurrentUser } from './features/auth/useCurrentUser';
 import { DashboardPage } from './features/dashboard/DashboardPage';
+import { SettingsPage } from './features/settings/SettingsPage';
 import { AppShell } from './layout/AppShell';
 import { ComingSoonPage } from './pages/ComingSoonPage';
 
@@ -49,7 +50,7 @@ export function App() {
         <Route path="receipts/*" element={<ComingSoonPage title="Чеки" />} />
         <Route path="inflation" element={<ComingSoonPage title="Личная инфляция" />} />
         <Route path="ask" element={<ComingSoonPage title="Вопросы" />} />
-        <Route path="settings" element={<ComingSoonPage title="Настройки" />} />
+        <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<ComingSoonPage title="Такой страницы нет" />} />
       </Route>
     </Routes>

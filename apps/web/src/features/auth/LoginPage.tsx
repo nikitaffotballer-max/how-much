@@ -9,7 +9,8 @@ import { useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router';
 import { hcApi } from '../../api/hcApi';
 import { AuthLayout } from './AuthLayout';
-import { DemoSignIn, EmailField, FormHeader, PasswordField, ServerError } from './authFields';
+import { ServerError } from '../../components/ServerError';
+import { DemoSignIn, EmailField, FormHeader, PasswordField } from './authFields';
 import { useFinishSignIn } from './useFinishSignIn';
 
 export function LoginPage() {

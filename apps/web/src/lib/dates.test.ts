@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayOfMonth, formatPurchaseTime } from './dates';
+import { dayOfMonth, formatPurchaseTime, formatRelativeTime } from './dates';
 
 describe('formatPurchaseTime', () => {
   const now = new Date(2026, 9, 13, 18, 0);
@@ -24,5 +24,20 @@ describe('formatPurchaseTime', () => {
 describe('dayOfMonth', () => {
   it('берёт число из ISO-даты', () => {
     expect(dayOfMonth('2026-10-07')).toBe(7);
+  });
+});
+
+describe('formatRelativeTime', () => {
+  const now = new Date(2026, 9, 13, 18, 0);
+  const minutesAgo = (minutes: number) => new Date(now.getTime() - minutes * 60_000).toISOString();
+
+  it('свежие события — в минутах и часах', () => {
+    expect(formatRelativeTime(minutesAgo(0), now)).toBe('только что');
+    expect(formatRelativeTime(minutesAgo(5), now)).toBe('5 минут назад');
+    expect(formatRelativeTime(minutesAgo(120), now)).toBe('2 часа назад');
+  });
+
+  it('давние — датой', () => {
+    expect(formatRelativeTime(new Date(2026, 9, 11, 10, 20).toISOString(), now)).toBe('11 октября');
   });
 });
